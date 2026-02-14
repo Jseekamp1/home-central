@@ -30,3 +30,5 @@ Homeowners juggle dozens of maintenance tasks and improvement projects with no u
 - Reusable Vue components live in a shared directory, not duplicated per feature
 - TypeScript strict mode across the frontend
 - Keep the Supabase schema as the single source of truth for data types — generate/share types from it
+- Follow test-driven development (TDD) — write tests first, then implement the feature to make them pass
+- Verify all tests pass before considering a feature complete

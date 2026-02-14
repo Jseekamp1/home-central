@@ -25,3 +25,15 @@ npm-debug.log*
 
 # Coverage
 coverage/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+*.egg-info/
+.pytest_cache/
+
+# Nuxt
+.nuxt/
+.output/

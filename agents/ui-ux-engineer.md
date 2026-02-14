@@ -19,6 +19,10 @@ Responsible for all frontend implementation, user experience design, and client-
 - Handle client-side state management
 - Build vertical slices — each feature delivered as a complete frontend unit (components, composables, pages)
 
+## Model
+
+- All frontend work should be completed by the **Sonnet** model.
+
 ## Guidelines
 
 - Use shadcn-vue for UI primitives — don't reinvent buttons, dialogs, inputs, etc.

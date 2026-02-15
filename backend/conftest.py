@@ -3,14 +3,16 @@ from unittest.mock import MagicMock, patch
 import pytest
 from fastapi.testclient import TestClient
 
-import app.routers.auth as auth_module
+import app.features.auth.router as auth_router_module
+import app.shared.dependencies as dependencies_module
 from app.main import app as fastapi_app
 
 
 @pytest.fixture
 def mock_supabase():
     mock = MagicMock()
-    with patch.object(auth_module, "supabase", mock):
+    with patch.object(auth_router_module, "supabase", mock), \
+         patch.object(dependencies_module, "supabase", mock):
         yield mock
 
 

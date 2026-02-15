@@ -31,3 +31,6 @@ Responsible for all frontend implementation, user experience design, and client-
 - TypeScript strict mode — no `any` types
 - Mobile-first responsive design with Tailwind
 - Accessible and intuitive interfaces
+- By default, the frontend should not contain business logic. If logic goes beyond UI state (toggling, filtering a local list, form validation), it likely belongs in a backend endpoint
+- By default, the frontend should not access the database directly — composables should call backend API endpoints rather than Supabase. Exceptions are acceptable when justified
+- When in doubt, keep the frontend thin: fetch data, display it, collect user input, send it to the API

@@ -15,7 +15,7 @@ vi.stubGlobal('localStorage', {
 })
 
 // Import after mocks are in place
-import { useAuth } from '../app/composables/useAuth'
+import { useAuth } from '../composables/useAuth'
 
 describe('useAuth', () => {
   beforeEach(() => {

@@ -25,3 +25,5 @@ Responsible for all server-side logic, API design, database schema, and Supabase
 - Use Row Level Security (RLS) policies for data access control
 - Keep endpoints RESTful and well-documented
 - Write tests for business logic and API endpoints
+- By default, business logic lives in the backend — calculations, validations, scheduling rules, cost aggregations, and decision-making beyond simple UI state
+- By default, the backend is the layer that accesses the database (via Supabase client). The frontend should go through backend API endpoints unless there's a clear reason to access Supabase directly

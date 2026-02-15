@@ -12,7 +12,8 @@ from app.main import app as fastapi_app
 def mock_supabase():
     mock = MagicMock()
     with patch.object(auth_router_module, "supabase", mock), \
-         patch.object(dependencies_module, "supabase", mock):
+         patch.object(dependencies_module, "supabase", mock), \
+         patch.object(dependencies_module, "create_client", return_value=mock):
         yield mock
 
 

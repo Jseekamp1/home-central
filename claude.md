@@ -23,6 +23,10 @@ Homeowners juggle dozens of maintenance tasks and improvement projects with no u
 - **AI**: LLM integration for project assistant (instructions, estimates, clarifying questions)
 - **Future**: Mobile app with push notifications — build web-first with mobile portability in mind
 
+## Milestone Planning
+
+At the start of each milestone, the first task is always a planning session — NOT implementation. Claude should ask clarifying questions about the milestone's features, surface edge cases, and help the user work through product decisions. The output of this session is a spec file (e.g., `spec-milestone-1.md`) that captures all decisions. Do NOT begin implementation until a spec file exists and is approved for the current milestone. Planning should always use the latest **Opus** model.
+
 
 # ═══════════════════════════════════════════════════════════════
 # DEVELOPMENT RULES & WORKFLOW

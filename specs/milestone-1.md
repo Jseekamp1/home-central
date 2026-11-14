@@ -1,6 +1,6 @@
 # Milestone 1 — Foundation Reset
 
-**Status:** Draft, awaiting approval
+**Status:** Approved, implemented
 
 ## Goal
 

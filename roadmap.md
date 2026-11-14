@@ -4,8 +4,8 @@ Each milestone starts with a planning session that produces `specs/milestone-N.m
 
 | # | Milestone | Status |
 |---|---|---|
-| 1 | Foundation reset | Next |
-| 2 | Properties and projects | Partly built on the old stack |
+| 1 | Foundation reset | Done |
+| 2 | Properties and projects | In progress |
 | 3 | Property profile and assets | Not started |
 | 4 | Items, inventory, and project materials | Not started |
 | 5 | Shopping list | Not started |

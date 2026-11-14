@@ -1,196 +1,57 @@
 # Home Central
 
-## What It Does
+A home project planner. Homeowners capture, plan, schedule, and track maintenance and improvement projects in one place: AI-assisted project planning, materials and shopping lists, recurring maintenance tailored to their home, and a scheduler that fits work into their available time by priority, duration, and materials on hand.
 
-Home Central is a home project planner that helps homeowners organize, schedule, and complete home maintenance and improvement projects. It combines project management, smart scheduling, and AI-assisted planning into a single application.
-
-Core capabilities:
-
-- **Project Planning** - Users describe a project (via text or speech-to-text) and the app generates materials lists, step-by-step instructions, time estimates, cost estimates, and learning resources. A conversational flow asks clarifying questions to refine details.
-- **Smart Scheduling** - A calendar system that assigns projects to time slots based on priority, estimated duration, and whether the user has the required materials on hand.
-- **Materials & Shopping Lists** - Tracks what materials users already own, calculates remaining costs, and builds consolidated shopping lists for upcoming projects.
-- **Recurring Maintenance Reminders** - Schedules and reminds users about recurring home tasks (air filter changes, water filter replacements, appliance servicing, seasonal yard work) with advice tailored to their location and home specifications.
-- **Priority Management** - Users assign priority levels to projects, and the scheduler uses these to determine what gets done first.
-
-## What Problem It Solves
-
-Homeowners juggle dozens of maintenance tasks and improvement projects with no unified system. They forget recurring maintenance, buy materials piecemeal, underestimate project scope, and struggle to fit projects into their available time. Home Central eliminates this by providing a single place to capture, plan, schedule, and track everything related to maintaining and improving a home.
+The roadmap is in [roadmap.md](roadmap.md). Each milestone's decisions live in `specs/milestone-N.md`.
 
 ## Tech Stack
 
-- **Frontend**: Nuxt 3 (Vue 3), TypeScript, Tailwind CSS, shadcn-vue
-- **Backend**: Python (FastAPI), Supabase (PostgreSQL, Auth, Storage)
-- **AI**: LLM integration for project assistant (instructions, estimates, clarifying questions)
-- **Future**: Mobile app with push notifications — build web-first with mobile portability in mind
+- **Backend**: Python, FastAPI, SQLModel, Alembic migrations, SQLite for local development. The production database is decided in Milestone 10. Keep the schema Postgres-compatible: no SQLite-only types or behavior.
+- **Frontend**: Nuxt 4 (Vue 3), TypeScript strict, Tailwind CSS. Use shadcn-vue for UI primitives; install it when the first component needs one.
+- **AI**: LLM calls happen only in the backend. Mock the LLM in tests, never the database.
+- **Auth**: Until a real auth provider is chosen, `get_current_user` (backend shared dependency) returns a fixed dev user. All data access goes through it, so swapping in real auth touches one place.
 
-## Milestone Planning
+## Mobile Portability
 
-At the start of each milestone, the first task is always a planning session — NOT implementation. Claude should ask clarifying questions about the milestone's features, surface edge cases, and help the user work through product decisions. The output of this session is a spec file (e.g., `spec-milestone-1.md`) that captures all decisions. Do NOT begin implementation until a spec file exists and is approved for the current milestone. Planning should always use the latest **Opus** model.
+Mobile comes later and does not need to share code with the web app, so the web app must stay a thin client of the API:
 
+- The backend API is the product. Every feature works through documented REST endpoints, so any client (web, PWA, Capacitor, native iOS) can use it.
+- The frontend uses no server-side Nuxt features (server routes, SSR-only data loading). It must work as a static SPA.
+- Auth uses bearer tokens, not cookies.
+- Mobile-first layouts: design for small screens, then add breakpoints.
 
-# ═══════════════════════════════════════════════════════════════
-# DEVELOPMENT RULES & WORKFLOW
-# ═══════════════════════════════════════════════════════════════
+## Architecture
 
+**Vertical slices.** Code is organized by feature, not by layer. `backend/app/features/<feature>/` holds that feature's router, models, service, and tests. `frontend/app/features/<feature>/` mirrors it by name with components, composables, and tests. Shared code goes in `shared/` only once the same logic appears in 3+ features; some duplication is preferred over a wrong abstraction.
 
-## Project-Specific Conventions
+**Layer responsibilities.**
+- The backend owns business logic: calculations, validation, scheduling rules, cost aggregation, recurrence, and all database access.
+- The frontend fetches data, displays it, collects input, and sends it to the API. Logic beyond UI state (toggles, local filtering, form validation) belongs in a backend endpoint.
 
-- Build features in vertical slices — backend and frontend are implemented as SEPARATE passes, not combined into one mega-task.
-- Use Vue composables for shared logic across components.
-- Reusable Vue components live in a shared directory, not duplicated per feature.
-- TypeScript strict mode across the frontend. No `any` types without explicit justification.
-- The Supabase schema is the single source of truth for data types. Generate and share types from it. Do NOT define conflicting type definitions that drift from the schema.
-- Use Row Level Security (RLS) policies for all data access control in Supabase.
-- Keep API endpoints RESTful and well-documented.
-- Mobile-first responsive design with Tailwind — design for small screens first, scale up.
-- All UI must be accessible — semantic HTML, proper ARIA attributes, keyboard navigation.
-- Follow test-driven development (TDD) — write tests first, then implement the feature to make them pass.
-- Verify ALL tests pass before considering a feature complete.
-- Frontend work should be completed by the **Sonnet** model.
+**Types.** The backend SQLModel models are the single source of truth. Frontend API types are generated from the backend's OpenAPI schema, never handwritten, so the two sides cannot drift.
 
+**Patterns.** Once a pattern exists (errors, validation, response shapes, auth), follow it. Propose changes to established patterns; don't change them unilaterally.
 
-## Workflow: Spec → Slice → Test → Commit → Repeat
+## Workflow
 
-IMPORTANT: Follow this sequence for every piece of work. Do not skip steps.
+1. **Milestone planning.** Each milestone starts with a planning session, not code: ask clarifying questions, surface edge cases, and record decisions in `specs/milestone-N.md`. No implementation until the spec is approved.
+2. **Plan each slice.** Before coding, read the spec and one reference feature, then present a short plan (files, data flow, tests) and wait for approval.
+3. **Backend slice, then frontend slice**, as separate passes. Each is a commit checkpoint: when tests pass, say so and suggest a commit message.
+4. **Ask before** adding dependencies, making architectural changes that affect multiple features, or creating files outside the established structure.
 
-### 1. Read First, Code Never (Until Told)
+## Testing
 
-- When given a new task, ALWAYS read the relevant files, the spec, and any reference features BEFORE proposing code.
-- Present a plan and wait for approval. Do NOT jump straight to implementation.
-- If the task is ambiguous, ask clarifying questions rather than guessing.
+- **TDD.** Write tests first, run them, and show they fail (red). Then implement until they pass (green). Never edit a test to make it pass; fix the implementation.
+- **Meaningful tests only.** Backend tests run against a real database (in-memory SQLite) through the real API. Mock only external services (LLM, email, push).
+- **Prune when a feature is done.** Delete the scaffolding tests. Keep a couple of important tests per feature: the API contract, and logic that can't be checked by eye (scheduling, cost math, recurrence dates).
+- While working, run only the current feature's tests. Run the full suite before committing.
 
-### 2. Plan Before Executing
+## Conventions
 
-- For any non-trivial task, create or update a brief implementation plan BEFORE writing code.
-- The plan should include: which files will be created or modified, what the data flow looks like, and what tests will verify correctness.
-- Keep plans concise — a short numbered list, not an essay.
-
-### 3. One Vertical Slice at a Time
-
-- Each task should be a single, focused feature slice — either backend OR frontend, not both at once.
-- For a given feature, build the backend slice first (API route, service logic, database query, validation, tests). Get it working and committed.
-- Then build the frontend slice in a separate pass (component, API call, types, tests). Get it working and committed.
-- This keeps each task small enough for high-quality output within the context window.
-- Do NOT implement multiple unrelated features in one pass.
-
-### 4. Test-Driven When Possible
-
-- Write tests FIRST based on expected input/output.
-- Confirm tests fail before writing implementation.
-- Do NOT modify tests to make them pass — modify the implementation instead.
-- Do NOT write mock implementations for features that don't exist yet unless explicitly told to.
-
-### 5. Commit Points
-
-- Every completed slice (backend or frontend) should be treated as a commit checkpoint.
-- When a slice is working and tests pass, say so clearly and suggest a commit message.
-
-
-## Architecture Rules
-
-### Vertical Slice Architecture
-
-This project uses Vertical Slice Architecture. Code is organized by FEATURE, not by technical layer.
-
-- CORRECT: `features/create-project/` contains handler, service, repository, validator, types, and tests for that feature.
-- WRONG: Separate `controllers/`, `services/`, `repositories/` folders where one feature is scattered across many directories.
-
-Backend and frontend feature folders should mirror each other by name. If the backend has `features/create-project/`, the frontend should have `features/create-project/`.
-
-<!-- UNCOMMENT WHEN SKELETON LAYER IS ESTABLISHED
-### The Skeleton Is Sacred
-
-The skeleton (base classes, interfaces, middleware, infrastructure code) is human-owned and rarely changes.
-
-- ALWAYS extend or use skeleton base classes when building new features.
-- NEVER modify skeleton files without explicit permission.
-- NEVER reinvent patterns that the skeleton already provides (error handling, auth, validation, logging, API response formats).
-- If you think a skeleton change is needed, propose it — do not implement it.
--->
-
-### Pattern Consistency
-
-As shared patterns emerge (error handling, auth, validation, logging, API response formats), treat them as established conventions. Do NOT reinvent them per feature. If you think an established pattern needs to change, propose it — do not implement the change unilaterally.
-
-### Shared Code Rules
-
-- Vue composables for shared logic go in the shared composables directory.
-- Reusable Vue components go in the shared components directory.
-- Backend shared utilities go in the shared directory.
-- Do NOT extract shared code prematurely. Only extract when the same logic appears in 3+ features.
-- Some duplication between slices is acceptable and preferred over wrong abstractions.
-
-### Supabase as Source of Truth
-
-- The Supabase schema defines all data types. Generated types from the schema are authoritative.
-- Do NOT create ad-hoc type definitions in feature code that conflict with schema types.
-- If a feature needs a type that doesn't exist in the schema, propose a migration first.
-
-
-## Context Window Management
-
-YOU MUST be aware of context limits. These rules help maintain output quality:
-
-- Keep focus on the current task ONLY. Do not load unrelated files into context.
-- When referencing existing code, read only the specific files needed — not the entire codebase.
-- If a task requires understanding a pattern, read ONE good reference feature, not all features.
-- If you notice yourself producing inconsistent or repetitive code, flag that context may be degrading.
-- Do NOT maintain a growing TODO list in conversation. Keep task scope to what was explicitly asked.
-
-
-## The Do's
-
-- DO follow existing patterns. When a reference feature exists, match its structure exactly.
-- DO write tests for every feature slice.
-- DO use the project's established error handling, validation, and response patterns.
-- DO keep files focused — one handler per file, one service per file, one composable per file.
-- DO name files consistently using established naming conventions.
-- DO suggest a commit message when a slice is complete and tested.
-- DO ask before making architectural decisions that affect multiple features.
-- DO provide clear explanations when something doesn't work as expected.
-- DO check that new code is consistent with existing conventions before presenting it.
-- DO use shadcn-vue components where appropriate rather than building custom UI from scratch.
-- DO use Tailwind utility classes for styling. No custom CSS unless Tailwind cannot achieve the result.
-- DO design mobile-first — start with small screen layouts, then add responsive breakpoints.
-- DO ensure all UI is accessible — semantic HTML, ARIA attributes, keyboard navigable.
-
-
-## The Don'ts
-
-- DON'T design or change the architecture without explicit approval.
-- DON'T build backend and frontend for a feature in the same pass. Separate slices.
-- DON'T create mega-files that handle multiple responsibilities.
-- DON'T skip validation or error handling "for now" — include it from the start.
-- DON'T add dependencies or libraries without asking first.
-- DON'T modify tests to make them pass — fix the implementation instead.
-- DON'T claim something is working without verifying. If you can't run it, say so.
-- DON'T over-engineer. Build exactly what was asked for. No speculative abstractions, no unnecessary flexibility, no extra features.
-- DON'T create files outside the established folder structure without asking.
-- DON'T put TODO comments in code as a substitute for actual implementation.
-- DON'T forget cross-cutting concerns — every feature must use the project's established auth, error handling, and logging patterns.
-- DON'T define types that conflict with the Supabase schema.
-- DON'T use `any` in TypeScript without explicit justification.
-
-
-## When Starting a New Feature
-
-Follow this exact checklist:
-
-1. Read the task requirements carefully.
-2. Read the spec (if relevant to this feature).
-3. Read ONE existing reference feature to understand the established pattern.
-4. Read any shared patterns or base utilities this feature will use.
-5. Present a brief plan: files to create, data flow, test approach.
-6. Wait for approval.
-7. Implement the backend slice first. Write tests, then implementation.
-8. Confirm backend tests pass. Suggest a commit.
-9. Implement the frontend slice. Write tests, then implementation.
-10. Confirm frontend tests pass. Suggest a commit.
-
-
-## When Something Goes Wrong
-
-- If a test fails, read the error carefully and fix the root cause. Do not patch symptoms.
-- If you're going in circles on a bug (3+ failed attempts), stop and present what you've tried and what you think the root cause might be. Ask for guidance.
-- If you realize the current approach has a fundamental flaw, say so immediately rather than continuing to build on a broken foundation.
-- If context feels degraded (you're forgetting earlier decisions or producing inconsistent code), flag it and suggest starting a fresh session.
+- One responsibility per file: one router, service, or composable per file.
+- Include validation and error handling from the start, not "for now".
+- No `any` in TypeScript without a stated reason. No TODO comments in place of implementation.
+- Accessible UI: semantic HTML, ARIA where needed, keyboard navigable.
+- Build exactly what was asked. No speculative abstractions or extra features.
+- Don't claim something works without running it. If you can't run it, say so.
+- If a fix fails 3 times, stop and present what you've tried and the likely root cause.

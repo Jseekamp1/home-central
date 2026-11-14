@@ -29,10 +29,10 @@ Recommended defaults (change any of these before approving):
 | Moving a project to another property | Not in this milestone. |
 | `draft` vs `ready` | `draft` = still being planned. `ready` = fully estimated and ready to be scheduled. Always set by hand. |
 | Leaving `done` | Setting `done` records `completed_at`; moving out of `done` clears it. |
-| Estimates after `ready` | The estimate rule only gates the move into `ready`. If a step without an estimate is added later, the project keeps its status and the step is flagged "needs estimate". The Milestone 8 scheduler skips flagged steps and lists them for the user. |
+| Estimates after `ready` | The estimate rule only gates the move into `ready`. If a step without an estimate is added later, the project keeps its status and the step is flagged "needs estimate". The Milestone 5 scheduler skips flagged steps and lists them for the user. |
 | Entering estimates | The step form puts the estimate next to the title, with quick picks (15 min, 30 min, 1 h, 2 h, 4 h) plus a custom value. The project shows the total and "N steps need an estimate". |
 | Reordering steps | Move up / move down buttons: accessible and touch-friendly. Drag-and-drop can come later. |
-| Step scheduling fields | `wait_after_minutes` and `keep_with_next` are stored now but get no UI until Milestone 8. |
+| Step scheduling fields | `wait_after_minutes` and `keep_with_next` are stored now but get no UI until Milestone 5. |
 | Assignee | Column added now, empty, with no UI until other users exist (Milestone 10). |
 | Columns for later milestones | `other_cost_cents`, `resources`, `asset_id`, `recurring_task_id`, `source`, and `kind` are added in the milestones that use them, not now. |
 
@@ -40,7 +40,7 @@ Recommended defaults (change any of these before approving):
 
 Created in this milestone (from the target model in `milestone-1.md`):
 
-**`properties`**: name (1–100 chars), kind (`home`, `rental`, `family`, `organization`, `other`), postal_code (1–20 chars, required), address_line (optional), notes (optional). Profile fields (climate, frost dates, year built, size) come in Milestone 3.
+**`properties`**: name (1–100 chars), kind (`home`, `rental`, `family`, `organization`, `other`), postal_code (1–20 chars, required), address_line (optional), notes (optional). Profile fields (climate, frost dates, year built, size) come in Milestone 8.
 
 **`property_members`**: property_id, user_id, role (`owner`, `editor`, `viewer`). Unique per property and user. Creating a property makes the creator its owner.
 
@@ -94,10 +94,11 @@ Deleting a property deletes its members, projects, and steps. Deleting a project
 
 ## Screens
 
-Mobile-first.
+Mobile-first, in the graphite-and-green design from `specs/design.md`.
 
-- **Header:** the property switcher (a select, with "Add property…" at the end), plus links to Projects and Dashboard.
-- **Setup** (`/setup`): name, kind, postal code. Shown automatically when the user has no property; also reachable from "Add property…".
+- **App shell:** the bottom bar (sidebar on desktop) shows only what exists in this milestone: Projects, which is the home screen for now, and More. Week, Talk and Shop arrive with their milestones.
+- **Property switcher:** the property name at the top of every screen opens a sheet listing the user's properties with their role in each, plus "Add a property" and that property's settings.
+- **Setup** (`/setup`): name, kind, postal code. Shown automatically when the user has no property; also reachable from "Add a property".
 - **Property settings** (`/property`): edit details. The owner can delete the property after a confirmation dialog.
 - **Projects** (`/projects`): tabs for Active, Done, Cancelled. Cards show title, status, priority, due date (with an overdue marker), step progress ("3 of 7"), total estimate, and a "needs estimates" marker when any step lacks one.
 - **New project** (`/projects/new`) and **Edit project** (`/projects/[id]/edit`): title, description, priority, due date, status.
@@ -110,7 +111,7 @@ Mobile-first.
   - When the last step is checked off: "All steps done. Mark project done?"
 - **Viewers** see the same screens without any editing controls.
 
-From the old pages on `wip/m2-old-project-pages`, reuse the layout and styling of `ProjectCard` and `ProjectForm`. The composable is rewritten on generated types.
+From the old pages on `wip/m2-old-project-pages`, reuse the structure of `ProjectCard` and `ProjectForm` where it fits; styling follows `specs/design.md`. The composable is rewritten on generated types.
 
 ## Slices
 
@@ -118,8 +119,8 @@ Each slice is a commit.
 
 1. UI foundation: frontend only. Upgrade to Tailwind v4, set up shadcn-vue, restyle the existing layout and dashboard with it. No feature changes.
 2. Properties: backend
-3. Design direction: no code. Decide navigation, property switcher placement, visual style, and shared UI patterns for the whole app, with mockups of the app shell and key screens. Output: `specs/design.md`, approved before slice 4.
-4. Properties: frontend (setup, switcher, settings)
+3. Design direction: no code. Output: `specs/design.md` (done).
+4. Properties: frontend (setup, switcher, settings). Starts by installing Modern Web Guidance and switching the theme tokens in `main.css` to graphite and green.
 5. Projects: backend
 6. Projects: frontend (list, create, edit, detail without steps)
 7. Steps: backend (including the `ready` rule)

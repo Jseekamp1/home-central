@@ -40,11 +40,11 @@ Conventions: UUID primary keys, `created_at` and `updated_at` on every table, mo
 | Table | Fields | Milestone |
 |---|---|---|
 | `users` | email, display_name | 1 |
-| `properties` | name, kind (`home`, `rental`, `family`, `organization`, `other`), address_line, postal_code, climate_zone, last_spring_frost (month-day), first_fall_frost (month-day), year_built, square_feet, notes | 2 (details in 3) |
+| `properties` | name, kind (`home`, `rental`, `family`, `organization`, `other`), address_line, postal_code, climate_zone, last_spring_frost (month-day), first_fall_frost (month-day), year_built, square_feet, notes | 2 (details in 8) |
 | `property_members` | property_id, user_id, role (`owner`, `editor`, `viewer`). Unique per property and user. | 2 |
-| `property_assets` | property_id, kind (`hvac`, `water_heater`, `appliance`, `lawn`, …), name, brand, model, install_date, specs (JSON, e.g. filter size, grass type) | 3 |
+| `property_assets` | property_id, kind (`hvac`, `water_heater`, `appliance`, `lawn`, …), name, brand, model, install_date, specs (JSON, e.g. filter size, grass type) | 8 |
 
-The frost dates are estimated by the LLM from the postal code when the property is created (Milestone 3). The user sees and confirms them, and can change them at any time. A lawn is an asset, so its grass type can drive which seasonal tasks apply.
+The frost dates are estimated by the LLM from the postal code when the property profile is filled in (Milestone 8). The user sees and confirms them, and can change them at any time. A lawn is an asset, so its grass type can drive which seasonal tasks apply.
 
 Access rule: every query for property data joins through `property_members` for the current user. Viewers can only read. Editors can create and change projects, items, and tasks. Only owners can delete the property or manage members. Every property has at least one owner.
 
@@ -66,8 +66,8 @@ Calculated, never stored: total duration (sum of steps), estimated cost (materia
 
 | Table | Fields | Milestone |
 |---|---|---|
-| `items` | kind (`tool`, `consumable`), user_id (tools only), property_id (consumables only), name, unit, quantity_on_hand, typical_unit_cost_cents | 4 |
-| `project_materials` | project_id, item_id, quantity_needed, unit_cost_cents? (overrides the typical cost) | 4 |
+| `items` | kind (`tool`, `consumable`), user_id (tools only), property_id (consumables only), name, unit, quantity_on_hand, typical_unit_cost_cents | 6 |
+| `project_materials` | project_id, item_id, quantity_needed, unit_cost_cents? (overrides the typical cost) | 6 |
 
 A check constraint makes sure a tool has a `user_id` and no `property_id`, and a consumable the reverse.
 
@@ -81,7 +81,7 @@ The shopping list is calculated for open projects:
 
 | Table | Fields | Milestone |
 |---|---|---|
-| `recurring_tasks` | property_id, asset_id?, title, description, rule_type (`after_completion`, `calendar`, `seasonal`), rule (JSON, shape depends on rule_type), lead_days, template_steps (JSON), template_materials (JSON), active | 7 |
+| `recurring_tasks` | property_id, asset_id?, title, description, rule_type (`after_completion`, `calendar`, `seasonal`), rule (JSON, shape depends on rule_type), lead_days, template_steps (JSON), template_materials (JSON), active | 9 |
 
 Rule types:
 - `after_completion`: due a set time after the last one was finished, e.g. 90 days after the last filter change. Rule: `{interval_count, interval_unit}`, where the unit is `day`, `week`, `month`, or `year`.
@@ -106,9 +106,11 @@ Occurrences:
 
 | Table | Fields | Milestone |
 |---|---|---|
-| `availability_windows` | user_id, weekday, start_time, end_time | 8 |
-| `schedule_blocks` | user_id, project_id, step_ids (the steps covered in this session), starts_at, ends_at, pinned | 8 |
-| `assistant_messages` | project_id, role (`user`, `assistant`), content | 6 |
+| `availability_windows` | user_id, weekday, start_time, end_time | 4 |
+| `schedule_blocks` | user_id, project_id, step_ids (the steps covered in this session), starts_at, ends_at, pinned | 5 |
+| `assistant_messages` | project_id, role (`user`, `assistant`), content | 3 |
+
+Milestone numbers follow the reordered `roadmap.md` (2026-11-14). Free time now comes mainly from Google Calendar and from voice, so `availability_windows` will be reshaped in Milestone 4's planning (dated free-time blocks with a source, rather than only weekly rules).
 
 Availability and schedules belong to a user, not a property, because one person's time covers all their properties.
 

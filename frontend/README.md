@@ -1,75 +1,37 @@
-# Nuxt Minimal Starter
+# Home Central — Frontend
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Nuxt 4 single-page app (no server-side rendering) that talks to the backend API.
 
 ## Setup
 
-Make sure to install dependencies:
-
 ```bash
-# npm
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
+## Run
 
-Start the development server on `http://localhost:3000`:
+Start the backend first (see `backend/README.md`), then:
 
 ```bash
-# npm
 npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
+The app runs at http://localhost:3000 and calls the API at `http://localhost:8000` (`runtimeConfig.public.apiBase` in `nuxt.config.ts`).
 
-Build the application for production:
+## API types
+
+API types are generated from the backend, never hand-written. With the backend running:
 
 ```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
+npm run gen:api
 ```
 
-Locally preview production build:
+This writes `app/shared/api/schema.d.ts`. Use the types through `Schemas` from `app/shared/api/types.ts`, e.g. `Schemas['UserRead']`. Re-run it after any backend model change and commit the result.
+
+## Tests
 
 ```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
+npm test
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+Run one feature's tests with `npx vitest run app/features/<feature>`.

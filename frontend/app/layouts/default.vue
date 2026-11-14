@@ -1,13 +1,23 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <header class="bg-white shadow-sm">
-      <nav aria-label="Main" class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-        <NuxtLink to="/" class="text-xl font-bold text-gray-900">Home Central</NuxtLink>
-        <NuxtLink to="/" class="text-gray-600 hover:text-gray-900">Dashboard</NuxtLink>
+  <div class="min-h-screen bg-background">
+    <header class="border-b bg-card">
+      <nav aria-label="Main" class="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
+        <NuxtLink to="/" class="flex items-center gap-2 text-lg font-semibold">
+          <House class="size-5 text-primary" aria-hidden="true" />
+          Home Central
+        </NuxtLink>
+        <Button as-child variant="ghost" size="sm">
+          <NuxtLink to="/">Dashboard</NuxtLink>
+        </Button>
       </nav>
     </header>
-    <main class="max-w-4xl mx-auto px-4 py-8">
+    <main class="mx-auto max-w-4xl px-4 py-6 sm:py-8">
       <slot />
     </main>
   </div>
 </template>
+
+<script setup lang="ts">
+import { House } from 'lucide-vue-next'
+import { Button } from '~/shared/components/ui/button'
+</script>

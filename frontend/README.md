@@ -28,6 +28,18 @@ npm run gen:api
 
 This writes `app/shared/api/schema.d.ts`. Use the types through `Schemas` from `app/shared/api/types.ts`, e.g. `Schemas['UserRead']`. Re-run it after any backend model change and commit the result.
 
+## UI components
+
+Styling is Tailwind CSS v4 (`app/assets/css/main.css`, which also holds the theme colors). UI primitives come from [shadcn-vue](https://www.shadcn-vue.com/) and live in `app/shared/components/ui/`, one folder per component. They are our code: edit them freely.
+
+To add one, copy its source from the shadcn-vue site (new-york style) into a new folder there, with imports pointing at `~/shared/lib/utils`. The `shadcn-vue add` CLI currently tries to install an unrelated npm package named `cn` with this setup, so don't use it until that's sorted out.
+
+## Type check
+
+```bash
+npm run typecheck
+```
+
 ## Tests
 
 ```bash

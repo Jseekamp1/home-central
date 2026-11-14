@@ -7,7 +7,7 @@ The roadmap is in [roadmap.md](roadmap.md). Each milestone's decisions live in `
 ## Tech Stack
 
 - **Backend**: Python, FastAPI, SQLModel, Alembic migrations, SQLite for local development. The production database is decided in Milestone 10. Keep the schema Postgres-compatible: no SQLite-only types or behavior.
-- **Frontend**: Nuxt 4 (Vue 3), TypeScript strict, Tailwind CSS. Use shadcn-vue for UI primitives; install it when the first component needs one.
+- **Frontend**: Nuxt 4 (Vue 3), TypeScript strict, Tailwind CSS v4. Use shadcn-vue components from `app/shared/components/ui/` for UI primitives; add new ones there (see `frontend/README.md`).
 - **AI**: LLM calls happen only in the backend. Mock the LLM in tests, never the database.
 - **Auth**: Until a real auth provider is chosen, `get_current_user` (backend shared dependency) returns a fixed dev user. All data access goes through it, so swapping in real auth touches one place.
 

@@ -1,22 +1,37 @@
-from unittest.mock import MagicMock, patch
-
 import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy.pool import StaticPool
+from sqlmodel import Session, SQLModel, create_engine
 
-import app.features.auth.router as auth_router_module
-import app.shared.dependencies as dependencies_module
 from app.main import app as fastapi_app
+from app.shared.db import get_session
 
 
 @pytest.fixture
-def mock_supabase():
-    mock = MagicMock()
-    with patch.object(auth_router_module, "supabase", mock), \
-         patch.object(dependencies_module, "supabase", mock), \
-         patch.object(dependencies_module, "create_client", return_value=mock):
-        yield mock
+def engine():
+    # One in-memory database per test; StaticPool keeps it on a single connection.
+    engine = create_engine(
+        "sqlite://",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    SQLModel.metadata.create_all(engine)
+    yield engine
+    engine.dispose()
 
 
 @pytest.fixture
-def client(mock_supabase):
-    return TestClient(fastapi_app)
+def session(engine):
+    with Session(engine) as session:
+        yield session
+
+
+@pytest.fixture
+def client(engine):
+    def override_get_session():
+        with Session(engine) as session:
+            yield session
+
+    fastapi_app.dependency_overrides[get_session] = override_get_session
+    yield TestClient(fastapi_app)
+    fastapi_app.dependency_overrides.clear()

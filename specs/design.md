@@ -18,7 +18,7 @@ Home Central is **time-first and voice-first**. Lists and settings support three
 - **Desktop:** the same items in a left sidebar, with Talk as a prominent button at its top.
 - **Property switcher:** the property name at the top of the screen. Tapping it opens a sheet listing **All properties** first, then each property with its color dot and your role, plus "Add a property" and that property's settings.
 - **All properties** mixes every property's items into one view: the Week strip stacks each day's segments in their property colors, window and item cards carry a color dot and the property name, and the Projects list shows the property on every card. Choosing one property filters back down, and project time is shown in green again.
-- Items appear only when their milestone ships. Until the Week screen exists (Milestone 5), Projects is the home screen; until the assistant exists (Milestone 3), there is no Talk button.
+- Items appear only when their milestone ships. Until the Week screen exists (Milestone 6), Projects is the home screen; until the assistant exists (Milestone 4), there is no Talk button.
 
 ## Visual system: graphite and green
 

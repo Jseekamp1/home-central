@@ -30,10 +30,10 @@ Recommended defaults (change any of these before approving):
 | Moving a project to another property | Not in this milestone. |
 | `draft` vs `ready` | `draft` = still being planned. `ready` = fully estimated and ready to be scheduled. Always set by hand. |
 | Leaving `done` | Setting `done` records `completed_at`; moving out of `done` clears it. |
-| Estimates after `ready` | The estimate rule only gates the move into `ready`. If a step without an estimate is added later, the project keeps its status and the step is flagged "needs estimate". The Milestone 5 scheduler skips flagged steps and lists them for the user. |
+| Estimates after `ready` | The estimate rule only gates the move into `ready`. If a step without an estimate is added later, the project keeps its status and the step is flagged "needs estimate". The Milestone 6 scheduler skips flagged steps and lists them for the user. |
 | Entering estimates | The step form puts the estimate next to the title, with quick picks (15 min, 30 min, 1 h, 2 h, 4 h) plus a custom value. The project shows the total and "N steps need an estimate". |
 | Reordering steps | Move up / move down buttons: accessible and touch-friendly. Drag-and-drop can come later. |
-| Step scheduling fields | `wait_after_minutes` and `keep_with_next` are stored now but get no UI until Milestone 5. |
+| Step scheduling fields | `wait_after_minutes` and `keep_with_next` are stored now but get no UI until Milestone 6. |
 | Assignee | Column added now, empty, with no UI until other users exist (Milestone 10). |
 | Columns for later milestones | `other_cost_cents`, `resources`, `asset_id`, `recurring_task_id`, `source`, and `kind` are added in the milestones that use them, not now. |
 
@@ -41,7 +41,7 @@ Recommended defaults (change any of these before approving):
 
 Created in this milestone (from the target model in `milestone-1.md`):
 
-**`properties`**: name (1–100 chars), kind (`home`, `rental`, `family`, `organization`, `other`), postal_code (1–20 chars, required), address_line (optional), notes (optional). Profile fields (climate, frost dates, year built, size) come in Milestone 8.
+**`properties`**: name (1–100 chars), kind (`home`, `rental`, `family`, `organization`, `other`), postal_code (1–20 chars, required), address_line (optional), notes (optional). Profile fields (climate, frost dates, year built, size) come in Milestone 9.
 
 **`property_members`**: property_id, user_id, role (`owner`, `editor`, `viewer`), color (a palette key: `sky`, `teal`, `lime`, `violet`, `pink`, `coral`, `sand`, `slate`). Unique per property and user. Creating a property makes the creator its owner.
 

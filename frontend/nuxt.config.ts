@@ -11,7 +11,11 @@ export default defineNuxtConfig({
     head: {
       htmlAttrs: { lang: 'en' },
       title: 'Home Central',
-      meta: [{ name: 'color-scheme', content: 'dark' }],
+      meta: [
+        // viewport-fit=cover lets the bottom bar pad itself clear of the iPhone home indicator.
+        { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
+        { name: 'color-scheme', content: 'dark' },
+      ],
       link: [
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },

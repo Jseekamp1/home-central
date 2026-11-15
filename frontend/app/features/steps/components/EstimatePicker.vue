@@ -56,7 +56,7 @@ function onCustom(event: Event) {
 
 function chipClass(on: boolean) {
   return [
-    'min-h-9 rounded-md border px-3 text-sm font-medium focus-visible:outline-2 focus-visible:outline-ring',
+    'h-9 rounded-md border px-3 text-sm font-medium focus-visible:outline-2 focus-visible:outline-ring',
     on ? 'border-primary bg-primary text-primary-foreground' : 'border-input bg-inset text-foreground hover:bg-secondary',
   ]
 }

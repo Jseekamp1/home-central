@@ -1,5 +1,5 @@
 <template>
-  <form class="flex flex-col gap-3 rounded-xl border border-border bg-card p-4" @submit.prevent="onSubmit">
+  <form class="flex flex-col gap-3 border-t border-border p-4" @submit.prevent="onSubmit">
     <div class="flex flex-col gap-1.5">
       <label :for="titleId" class="text-sm font-semibold">Add a step</label>
       <input

@@ -16,7 +16,7 @@
         :key="tab.value"
         :to="{ query: tab.value === 'active' ? {} : { view: tab.value } }"
         :aria-current="view === tab.value ? 'page' : undefined"
-        class="flex min-h-10 items-center justify-center rounded-md text-sm font-medium focus-visible:outline-2 focus-visible:outline-ring"
+        class="flex h-10 items-center justify-center rounded-md text-sm font-medium focus-visible:outline-2 focus-visible:outline-ring"
         :class="view === tab.value ? 'bg-secondary text-foreground font-semibold' : 'text-muted-foreground hover:text-foreground'"
       >
         {{ tab.label }}
@@ -43,7 +43,7 @@
       </Button>
     </div>
 
-    <ul v-else class="flex flex-col gap-3">
+    <ul v-else class="grid gap-3 lg:grid-cols-2">
       <li v-for="project in projects" :key="project.id">
         <ProjectCard :project="project" :property="isAll ? propertyById.get(project.property_id) : null" />
       </li>

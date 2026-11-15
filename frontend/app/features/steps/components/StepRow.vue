@@ -33,7 +33,7 @@
           :disabled="!canEdit"
           :aria-expanded="canEdit ? picking : undefined"
           :aria-label="`Estimate ${formatMinutes(step.estimated_minutes)}. Change estimate`"
-          class="shrink-0 rounded-md bg-secondary px-2 py-1 font-mono text-xs text-foreground enabled:hover:bg-accent focus-visible:outline-2 focus-visible:outline-ring"
+          class="compact-target shrink-0 rounded-md bg-secondary px-2 py-1 font-mono text-xs text-foreground enabled:hover:bg-accent focus-visible:outline-2 focus-visible:outline-ring"
           @click="picking = !picking"
         >
           {{ formatMinutes(step.estimated_minutes) }}
@@ -42,7 +42,7 @@
           v-else-if="canEdit"
           type="button"
           :aria-expanded="picking"
-          class="shrink-0 rounded-md border border-dashed border-attention px-2 py-1 text-xs font-semibold text-attention hover:bg-attention/10 focus-visible:outline-2 focus-visible:outline-ring"
+          class="compact-target shrink-0 rounded-md border border-dashed border-attention px-2 py-1 text-xs font-semibold text-attention hover:bg-attention/10 focus-visible:outline-2 focus-visible:outline-ring"
           @click="picking = !picking"
         >
           Add estimate

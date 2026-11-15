@@ -1,13 +1,24 @@
 <template>
-  <section aria-labelledby="steps-title" class="flex flex-col gap-3">
-    <div class="flex items-center justify-between gap-3">
-      <h2 id="steps-title" class="text-sm font-semibold tracking-wide text-muted-foreground uppercase">
-        Steps · {{ project.done_step_count }} of {{ project.step_count }}
-      </h2>
+  <section aria-labelledby="steps-title" class="flex flex-col rounded-xl border border-border bg-card">
+    <div class="flex items-start justify-between gap-3 px-4 pt-4 pb-3">
+      <div class="flex flex-col gap-0.5">
+        <h2 id="steps-title" class="text-lg font-semibold">Steps</h2>
+        <p class="text-sm text-muted-foreground">
+          <template v-if="project.step_count">
+            {{ project.done_step_count }} of {{ project.step_count }} done
+            <template v-if="project.estimated_minutes"> · ≈ {{ formatMinutes(project.estimated_minutes) }}</template>
+            <span v-if="project.unestimated_step_count" class="font-medium text-attention">
+              · {{ project.unestimated_step_count }} {{ project.unestimated_step_count === 1 ? 'needs' : 'need' }} an estimate
+            </span>
+          </template>
+          <template v-else>Break the work into steps with time estimates so it can be scheduled.</template>
+        </p>
+      </div>
       <Button
         v-if="canEdit && project.steps.length > 1"
         variant="outline"
         size="sm"
+        class="shrink-0"
         :aria-pressed="editing ? 'true' : 'false'"
         @click="editing = !editing"
       >
@@ -15,11 +26,7 @@
       </Button>
     </div>
 
-    <p v-if="!project.steps.length" class="rounded-xl border border-dashed border-input px-4 py-6 text-center text-sm text-muted-foreground">
-      No steps yet. Break the work into steps with time estimates so it can be scheduled.
-    </p>
-
-    <ol v-else ref="listEl" class="flex flex-col divide-y divide-border rounded-xl border border-border bg-card">
+    <ol v-if="project.steps.length" ref="listEl" class="flex flex-col divide-y divide-border border-t border-border">
       <StepRow
         v-for="(step, index) in project.steps"
         :key="step.id"
@@ -36,7 +43,7 @@
       />
     </ol>
 
-    <p v-if="steps.error.value" role="alert" class="text-sm text-destructive">{{ steps.error.value }}</p>
+    <p v-if="steps.error.value" role="alert" class="border-t border-border px-4 py-3 text-sm text-destructive">{{ steps.error.value }}</p>
     <p ref="announcer" role="status" class="sr-only" />
 
     <AddStepForm v-if="canEdit" :busy="adding" @add="onAdd" />
@@ -48,6 +55,7 @@ import { nextTick, ref } from 'vue'
 import { Button } from '~/shared/components/ui/button'
 import type { Schemas } from '~/shared/api/types'
 import { useSteps } from '../composables/useSteps'
+import { formatMinutes } from '../estimates'
 import AddStepForm from './AddStepForm.vue'
 import StepRow from './StepRow.vue'
 

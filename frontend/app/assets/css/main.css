@@ -47,6 +47,11 @@
   --border: #474d54;
   --input: #5a6168;
   --ring: #3ccb7f;
+  --sidebar: #24282c;
+
+  /* Smallest size for anything you click: compact with a mouse, 44px on touch
+     screens (WCAG 2.5.8 / 2.5.5; Modern Web Guidance "form-factor-adaptation"). */
+  --target-size: 24px;
 
   /* Property colors: each person picks one per property (specs/design.md). */
   --property-sky: #6cb4ee;
@@ -57,6 +62,12 @@
   --property-coral: #f4977a;
   --property-sand: #d9c3a0;
   --property-slate: #9aa9ba;
+}
+
+@media (pointer: coarse) {
+  :root {
+    --target-size: 44px;
+  }
 }
 
 @theme inline {
@@ -94,6 +105,7 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
 }
 
 @layer base {
@@ -111,6 +123,24 @@
 
   h1, h2, h3 {
     @apply font-display;
+    text-wrap: balance;
+  }
+
+  p, li {
+    text-wrap: pretty;
+  }
+
+  /* Every control meets the target size for the input in use. */
+  :where(
+    button:not(.compact-target),
+    select,
+    textarea,
+    input:not([type="checkbox"], [type="radio"]),
+    [data-slot="button"],
+    nav a
+  ) {
+    min-block-size: var(--target-size);
+    min-inline-size: var(--target-size);
   }
 
   ::selection {
@@ -203,6 +233,19 @@
   @media (forced-colors: active) {
     .step-check::before {
       background-color: CanvasText;
+    }
+  }
+
+  /* A small control (like an estimate chip) that stays visually compact but
+     still gets a full-size touch area. */
+  .compact-target {
+    position: relative;
+  }
+  @media (pointer: coarse) {
+    .compact-target::after {
+      content: "";
+      position: absolute;
+      inset: -10px;
     }
   }
 

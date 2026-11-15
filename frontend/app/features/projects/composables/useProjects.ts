@@ -3,6 +3,7 @@ import { useApi, type ApiResult } from '~/shared/composables/useApi'
 import type { Schemas } from '~/shared/api/types'
 
 type Project = Schemas['ProjectRead']
+type ProjectDetail = Schemas['ProjectDetail']
 type ProjectCreate = Schemas['ProjectCreate']
 type ProjectUpdate = Schemas['ProjectUpdate']
 export type ProjectView = Schemas['ProjectView']
@@ -46,9 +47,9 @@ export function createProjectsStore(api: Api) {
     projects.value = result.data
   }
 
-  async function get(id: string): Promise<Project | null> {
+  async function get(id: string): Promise<ProjectDetail | null> {
     error.value = null
-    const result = await api.request<Project>(`/projects/${id}`)
+    const result = await api.request<ProjectDetail>(`/projects/${id}`)
     if (result.error || !result.data) {
       error.value = result.error ?? 'Could not load the project'
       return null
@@ -66,9 +67,9 @@ export function createProjectsStore(api: Api) {
     return result.data
   }
 
-  async function update(id: string, body: ProjectUpdate): Promise<Project | null> {
+  async function update(id: string, body: ProjectUpdate): Promise<ProjectDetail | null> {
     error.value = null
-    const result = await api.request<Project>(`/projects/${id}`, { method: 'PATCH', body: JSON.stringify(body) })
+    const result = await api.request<ProjectDetail>(`/projects/${id}`, { method: 'PATCH', body: JSON.stringify(body) })
     if (result.error || !result.data) {
       error.value = result.error ?? 'Could not save the project'
       return null

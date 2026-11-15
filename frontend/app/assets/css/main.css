@@ -155,6 +155,57 @@
     forced-color-adjust: none;
   }
 
+  /*
+   * Step checkboxes: a native input restyled with appearance: none (Modern Web
+   * Guidance "checkbox"), so keyboard, labels and screen readers work as usual.
+   */
+  .step-check {
+    appearance: none;
+    display: inline-grid;
+    place-content: center;
+    flex-shrink: 0;
+    inline-size: 1.4rem;
+    aspect-ratio: 1;
+    margin: 0;
+    border: 2px solid var(--input);
+    border-radius: 0.4rem;
+    background-color: var(--inset);
+    cursor: pointer;
+  }
+  .step-check::before {
+    content: "";
+    inline-size: 0.85rem;
+    aspect-ratio: 1;
+    background-color: var(--primary-foreground);
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='20 6 9 17 4 12'></polyline></svg>") no-repeat center / contain;
+    scale: 0;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .step-check::before {
+      transition: scale 150ms ease;
+    }
+  }
+  .step-check:checked {
+    border-color: var(--primary);
+    background-color: var(--primary);
+  }
+  .step-check:checked::before {
+    scale: 1;
+  }
+  .step-check:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  .step-check:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  @media (forced-colors: active) {
+    .step-check::before {
+      background-color: CanvasText;
+    }
+  }
+
   /* Field error text is shown only once the field is :user-invalid. */
   .field-error {
     display: none;

@@ -40,3 +40,6 @@ __pycache__/
 
 # Local databases
 *.db
+
+# Agent skill links (machine-specific symlinks; the skill itself lives in .agents/)
+.claude/skills/

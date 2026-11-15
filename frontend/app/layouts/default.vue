@@ -1,23 +1,27 @@
 <template>
-  <div class="min-h-screen bg-background">
-    <header class="border-b bg-card">
-      <nav aria-label="Main" class="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
-        <NuxtLink to="/" class="flex items-center gap-2 text-lg font-semibold">
-          <House class="size-5 text-primary" aria-hidden="true" />
-          Home Central
-        </NuxtLink>
-        <Button as-child variant="ghost" size="sm">
-          <NuxtLink to="/">Dashboard</NuxtLink>
-        </Button>
-      </nav>
+  <div class="min-h-dvh">
+    <header class="mx-auto flex max-w-3xl items-center justify-between gap-2 px-4 pt-3 pb-1">
+      <PropertySwitcher v-if="current" />
+      <span v-else class="flex min-h-11 items-center font-display text-[17px] font-semibold">Home Central</span>
     </header>
-    <main class="mx-auto max-w-4xl px-4 py-6 sm:py-8">
+
+    <div v-if="loadFailed" role="alert" class="mx-auto mt-2 flex max-w-3xl items-center justify-between gap-3 px-4">
+      <span class="text-sm text-destructive">{{ error }}</span>
+      <Button variant="outline" size="sm" @click="load">Try again</Button>
+    </div>
+
+    <main class="mx-auto max-w-3xl px-4 py-6">
       <slot />
     </main>
   </div>
 </template>
 
 <script setup lang="ts">
-import { House } from 'lucide-vue-next'
+import { computed } from 'vue'
 import { Button } from '~/shared/components/ui/button'
+import PropertySwitcher from '~/features/properties/components/PropertySwitcher.vue'
+import { useProperties } from '~/features/properties/composables/useProperties'
+
+const { current, error, loaded, load } = useProperties()
+const loadFailed = computed(() => !loaded.value && !!error.value)
 </script>

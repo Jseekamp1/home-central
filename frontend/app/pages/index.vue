@@ -1,34 +1,39 @@
 <template>
-  <section aria-labelledby="dashboard-title" class="space-y-4">
-    <h1 id="dashboard-title" class="text-2xl font-bold">Dashboard</h1>
+  <section v-if="current" aria-labelledby="home-title" class="flex flex-col gap-5">
+    <div class="flex items-baseline justify-between gap-3">
+      <h1 id="home-title" class="text-3xl font-bold tracking-tight">{{ current.name }}</h1>
+      <Button as-child variant="outline" size="sm">
+        <NuxtLink to="/property">Settings</NuxtLink>
+      </Button>
+    </div>
 
-    <p v-if="error" role="alert" class="text-destructive">{{ error }}</p>
+    <dl class="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border bg-border">
+      <div class="flex flex-col gap-1 bg-card p-4">
+        <dt class="text-sm text-muted-foreground">Kind</dt>
+        <dd class="font-semibold">{{ kindLabel(current.kind) }}</dd>
+      </div>
+      <div class="flex flex-col gap-1 bg-card p-4">
+        <dt class="text-sm text-muted-foreground">Your role</dt>
+        <dd class="font-semibold">{{ roleLabel(current.my_role) }}</dd>
+      </div>
+      <div class="flex flex-col gap-1 bg-card p-4">
+        <dt class="text-sm text-muted-foreground">Postal code</dt>
+        <dd class="font-semibold">{{ current.postal_code }}</dd>
+      </div>
+      <div class="flex flex-col gap-1 bg-card p-4">
+        <dt class="text-sm text-muted-foreground">Address</dt>
+        <dd class="font-semibold">{{ current.address_line || '—' }}</dd>
+      </div>
+    </dl>
 
-    <Card v-else-if="user">
-      <CardHeader>
-        <CardDescription>Signed in as</CardDescription>
-        <CardTitle class="text-lg">{{ user.display_name }}</CardTitle>
-      </CardHeader>
-      <CardContent class="text-sm text-muted-foreground">{{ user.email }}</CardContent>
-    </Card>
-
-    <p v-else class="text-muted-foreground" aria-live="polite">Loading…</p>
+    <p v-if="current.notes" class="rounded-xl border border-border bg-card p-4 text-muted-foreground">{{ current.notes }}</p>
   </section>
 </template>
 
 <script setup lang="ts">
-import { useApi } from '~/shared/composables/useApi'
-import type { Schemas } from '~/shared/api/types'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/shared/components/ui/card'
+import { Button } from '~/shared/components/ui/button'
+import { useProperties } from '~/features/properties/composables/useProperties'
+import { kindLabel, roleLabel } from '~/features/properties/kinds'
 
-const { request } = useApi()
-
-const user = ref<Schemas['UserRead'] | null>(null)
-const error = ref<string | null>(null)
-
-onMounted(async () => {
-  const result = await request<Schemas['UserRead']>('/me')
-  user.value = result.data
-  error.value = result.error
-})
+const { current } = useProperties()
 </script>

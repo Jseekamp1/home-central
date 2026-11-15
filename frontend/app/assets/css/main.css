@@ -1,63 +1,69 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
-
-/* shadcn-vue theme tokens (neutral base, green primary for Home Central). */
+/*
+ * Graphite and green — see specs/design.md. One theme, between dark and light.
+ * Components use these tokens through Tailwind (bg-background, text-muted-foreground, ...),
+ * never raw hex values.
+ */
 :root {
-  --radius: 0.625rem;
-  --background: oklch(0.985 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.527 0.154 150.069);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.48 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.627 0.154 150.069);
-}
+  color-scheme: dark;
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.627 0.17 149.214);
-  --primary-foreground: oklch(0.145 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.527 0.154 150.069);
+  --radius: 0.75rem;
+
+  --background: #2b2f33;
+  --background-lift: #33383d;
+  --foreground: #e3e7eb;
+
+  --card: #363b40;
+  --card-foreground: #e3e7eb;
+  --popover: #363b40;
+  --popover-foreground: #e3e7eb;
+
+  /* Inset surface for items nested inside a panel. */
+  --inset: #2b2f33;
+
+  --primary: #3ccb7f;
+  --primary-foreground: #1c2024;
+
+  --secondary: #40464c;
+  --secondary-foreground: #e3e7eb;
+
+  --muted: #40464c;
+  --muted-foreground: #a9b1b9;
+
+  --accent: #40464c;
+  --accent-foreground: #e3e7eb;
+
+  --destructive: #f28b82;
+  --destructive-border: #5c3b3b;
+
+  --attention: #f2b860;
+  --project-time: #5fc891;
+  --project-time-label: #7dd6a8;
+
+  --border: #474d54;
+  --input: #5a6168;
+  --ring: #3ccb7f;
 }
 
 @theme inline {
+  --font-sans: Inter, system-ui, sans-serif;
+  --font-display: Geist, Inter, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
+  --color-inset: var(--inset);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
@@ -67,6 +73,10 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-destructive-border: var(--destructive-border);
+  --color-attention: var(--attention);
+  --color-project-time: var(--project-time);
+  --color-project-time-label: var(--project-time-label);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -76,7 +86,61 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
+    background-image: linear-gradient(180deg, var(--background-lift) 0, var(--background) 240px);
+    background-repeat: no-repeat;
+    accent-color: var(--primary);
+    scrollbar-color: var(--input) var(--background);
+  }
+
+  h1, h2, h3 {
+    @apply font-display;
+  }
+
+  ::selection {
+    background-color: color-mix(in srgb, var(--primary) 35%, transparent);
+    color: var(--foreground);
+  }
+
+  /* Only flag fields after the user has interacted with them. */
+  input:user-invalid,
+  textarea:user-invalid,
+  select:user-invalid {
+    border-color: var(--destructive);
+  }
+
+  /* Native modal dialogs: keep scrolling inside the dialog, never the page behind it. */
+  dialog:modal {
+    overscroll-behavior: contain;
+  }
+  dialog::backdrop {
+    overflow: hidden;
+    overscroll-behavior: contain;
+    background-color: rgb(16 18 20 / 0.6);
+  }
+}
+
+@layer utilities {
+  /* Hidden visually, still read by screen readers. */
+  .visually-hidden:where(:not(:focus-within, :active)) {
+    position: absolute !important;
+    clip-path: inset(50%) !important;
+    overflow: hidden !important;
+    width: 1px !important;
+    height: 1px !important;
+    margin: -1px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  /* Field error text is shown only once the field is :user-invalid. */
+  .field-error {
+    display: none;
+  }
+  :is(input, select, textarea):user-invalid ~ .field-error {
+    display: block;
   }
 }

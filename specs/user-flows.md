@@ -43,17 +43,17 @@ Shown after creating a property, so the app is useful from the first minute. Eve
 
 | # | Flow | Who | Starts from | Path | Ends at | Milestone | Status |
 |---|---|---|---|---|---|---|---|
-| J1 | Create a project by hand | Editor | Projects → New | Title, description, priority, due date → Save | Project detail, status Draft | 2 | Designed |
-| J2 | Browse projects | Member | Projects | Active / Done / Cancelled tabs; in All properties each card shows its property | Projects | 2 | Designed |
+| J1 | Create a project by hand | Editor | Projects → New | Title, description, priority, due date → Save | Project detail, status Draft | 2 | Built |
+| J2 | Browse projects | Member | Projects | Active / Done / Cancelled tabs; in All properties each card shows its property | Projects | 2 | Built |
 | J3 | Plan steps | Editor | Project detail | Add a step with title and a quick-pick estimate (15 min – 4 h, or custom) | Step list | 2 | Designed |
 | J4 | Reorder steps | Editor | Project detail → Reorder | Move up / move down | Step list | 2 | Designed |
 | J5 | Mark a project ready | Editor | Project detail | "Mark ready" is enabled once every step has an estimate; otherwise it says how many are missing | Ready to schedule | 2 | Designed |
 | J6 | Work through steps | Editor | Project detail or Week | Check off a step → Draft or Ready moves to In progress | Project detail | 2 | Designed |
 | J7 | Finish a project | Editor | Checking off the last step | "All steps done. Mark project done?" → Mark done | Done tab | 2 | Designed |
-| J8 | Edit a project | Editor | Project detail → Edit | Change fields → Save | Project detail | 2 | Designed |
-| J9 | Cancel a project | Editor | Project detail or Week item | Cancel → status line with Undo | Cancelled tab; its scheduled time is refilled | 2 (Week: 6) | Designed |
-| J10 | Delete a project | Editor | Project detail → Delete | Confirmation focuses "Keep it" → Delete | Projects | 2 | Designed |
-| J11 | Follow a project as a viewer | Viewer | Projects | Same screens, no editing controls | — | 2 | Designed |
+| J8 | Edit a project | Editor | Project detail → Edit | Change fields → Save | Project detail | 2 | Built |
+| J9 | Cancel a project | Editor | Project detail or Week item | Cancel → status line with Undo | Cancelled tab; its scheduled time is refilled | 2 (Week: 6) | Built (Week action: 6) |
+| J10 | Delete a project | Editor | Project detail → Delete | Confirmation focuses "Keep it" → Delete | Projects | 2 | Built |
+| J11 | Follow a project as a viewer | Viewer | Projects | Same screens, no editing controls | — | 2 | Built |
 
 ## Talk out a project
 

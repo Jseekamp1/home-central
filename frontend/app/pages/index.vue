@@ -1,64 +1,101 @@
 <template>
-  <section v-if="isAll" aria-labelledby="home-title" class="flex flex-col gap-5">
-    <h1 id="home-title" class="text-3xl font-bold tracking-tight">All properties</h1>
-    <ul class="flex flex-col gap-3">
-      <li v-for="p in properties" :key="p.id">
-        <button
-          type="button"
-          class="flex w-full items-center gap-3 rounded-xl border border-border bg-card p-4 text-left hover:bg-secondary focus-visible:outline-2 focus-visible:outline-ring"
-          @click="select(p.id)"
-        >
-          <PropertyDot :color="p.my_color" />
-          <span class="flex min-w-0 flex-1 flex-col">
-            <span class="truncate font-semibold">{{ p.name }}</span>
-            <span class="text-sm text-muted-foreground">{{ kindLabel(p.kind) }} · {{ roleLabel(p.my_role) }}</span>
-          </span>
-          <ChevronRight class="size-5 text-muted-foreground" aria-hidden="true" />
-        </button>
-      </li>
-    </ul>
-  </section>
-
-  <section v-else-if="current" aria-labelledby="home-title" class="flex flex-col gap-5">
-    <div class="flex items-baseline justify-between gap-3">
-      <h1 id="home-title" class="flex items-center gap-3 text-3xl font-bold tracking-tight">
-        <PropertyDot v-if="hasMultiple" :color="current.my_color" />
-        {{ current.name }}
-      </h1>
-      <Button as-child variant="outline" size="sm">
-        <NuxtLink to="/property">Settings</NuxtLink>
+  <section aria-labelledby="projects-title" class="flex flex-col gap-5">
+    <div class="flex items-center justify-between gap-3">
+      <h1 id="projects-title" class="text-3xl font-bold tracking-tight">Projects</h1>
+      <Button v-if="canCreate" as-child>
+        <NuxtLink to="/projects/new">
+          <Plus aria-hidden="true" />
+          New project
+        </NuxtLink>
       </Button>
     </div>
 
-    <dl class="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border bg-border">
-      <div class="flex flex-col gap-1 bg-card p-4">
-        <dt class="text-sm text-muted-foreground">Kind</dt>
-        <dd class="font-semibold">{{ kindLabel(current.kind) }}</dd>
-      </div>
-      <div class="flex flex-col gap-1 bg-card p-4">
-        <dt class="text-sm text-muted-foreground">Your role</dt>
-        <dd class="font-semibold">{{ roleLabel(current.my_role) }}</dd>
-      </div>
-      <div class="flex flex-col gap-1 bg-card p-4">
-        <dt class="text-sm text-muted-foreground">Postal code</dt>
-        <dd class="font-semibold">{{ current.postal_code }}</dd>
-      </div>
-      <div class="flex flex-col gap-1 bg-card p-4">
-        <dt class="text-sm text-muted-foreground">Address</dt>
-        <dd class="font-semibold">{{ current.address_line || '—' }}</dd>
-      </div>
-    </dl>
+    <nav aria-label="Project views" class="grid grid-cols-3 gap-1 rounded-lg border border-border bg-card p-1">
+      <NuxtLink
+        v-for="tab in tabs"
+        :key="tab.value"
+        :to="{ query: tab.value === 'active' ? {} : { view: tab.value } }"
+        :aria-current="view === tab.value ? 'page' : undefined"
+        class="flex min-h-10 items-center justify-center rounded-md text-sm font-medium focus-visible:outline-2 focus-visible:outline-ring"
+        :class="view === tab.value ? 'bg-secondary text-foreground font-semibold' : 'text-muted-foreground hover:text-foreground'"
+      >
+        {{ tab.label }}
+      </NuxtLink>
+    </nav>
 
-    <p v-if="current.notes" class="rounded-xl border border-border bg-card p-4 text-muted-foreground">{{ current.notes }}</p>
+    <div v-if="error" role="alert" class="flex items-center justify-between gap-3 rounded-lg border border-destructive-border bg-card px-4 py-3">
+      <span class="text-sm text-destructive">{{ error }}</span>
+      <Button variant="outline" size="sm" @click="reload">Try again</Button>
+    </div>
+
+    <ul v-else-if="loading && !projects.length" aria-hidden="true" class="flex flex-col gap-3">
+      <li v-for="n in 3" :key="n" class="flex flex-col gap-3 rounded-xl border border-border bg-card p-4">
+        <span class="h-4 w-3/5 rounded bg-secondary" />
+        <span class="h-3 w-2/5 rounded bg-secondary/70" />
+      </li>
+    </ul>
+
+    <div v-else-if="!projects.length" class="flex flex-col items-center gap-2 rounded-xl border border-dashed border-input px-4 py-10 text-center">
+      <p class="font-semibold">{{ empty.title }}</p>
+      <p class="text-sm text-muted-foreground">{{ empty.body }}</p>
+      <Button v-if="view === 'active' && canCreate" as-child class="mt-2">
+        <NuxtLink to="/projects/new">New project</NuxtLink>
+      </Button>
+    </div>
+
+    <ul v-else class="flex flex-col gap-3">
+      <li v-for="project in projects" :key="project.id">
+        <ProjectCard :project="project" :property="isAll ? propertyById.get(project.property_id) : null" />
+      </li>
+    </ul>
   </section>
 </template>
 
 <script setup lang="ts">
-import { ChevronRight } from 'lucide-vue-next'
+import { computed, watch } from 'vue'
+import { Plus } from 'lucide-vue-next'
 import { Button } from '~/shared/components/ui/button'
-import PropertyDot from '~/features/properties/components/PropertyDot.vue'
+import ProjectCard from '~/features/projects/components/ProjectCard.vue'
+import { useProjects, type ProjectScope, type ProjectView } from '~/features/projects/composables/useProjects'
 import { useProperties } from '~/features/properties/composables/useProperties'
-import { kindLabel, roleLabel } from '~/features/properties/kinds'
 
-const { properties, current, isAll, hasMultiple, select } = useProperties()
+const route = useRoute()
+const { properties, current, isAll } = useProperties()
+const { projects, loading, error, load } = useProjects()
+
+const tabs: { value: ProjectView, label: string }[] = [
+  { value: 'active', label: 'Active' },
+  { value: 'done', label: 'Done' },
+  { value: 'cancelled', label: 'Cancelled' },
+]
+
+const view = computed<ProjectView>(() => {
+  const requested = route.query.view
+  return requested === 'done' || requested === 'cancelled' ? requested : 'active'
+})
+
+const scope = computed<ProjectScope | null>(() => {
+  if (isAll.value) return { all: true }
+  if (current.value) return { propertyId: current.value.id }
+  return null
+})
+
+const propertyById = computed(() => new Map(properties.value.map(p => [p.id, p])))
+
+const canCreate = computed(() => {
+  if (isAll.value) return properties.value.some(p => p.my_role !== 'viewer')
+  return !!current.value && current.value.my_role !== 'viewer'
+})
+
+const empty = computed(() => ({
+  active: { title: 'No projects yet', body: 'Start with something small, like a filter change.' },
+  done: { title: 'Nothing finished yet', body: 'Projects you mark done show up here.' },
+  cancelled: { title: 'No cancelled projects', body: 'Cancelled projects show up here, in case you change your mind.' },
+}[view.value]))
+
+function reload() {
+  if (scope.value) load(scope.value, view.value)
+}
+
+watch([scope, view], reload, { immediate: true, deep: true })
 </script>

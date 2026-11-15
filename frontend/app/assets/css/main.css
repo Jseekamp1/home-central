@@ -39,6 +39,8 @@
   --destructive-border: #5c3b3b;
 
   --attention: #f2b860;
+  --urgent: #f8d3d0;
+  --urgent-foreground: #8f1d16;
   --project-time: #5fc891;
   --project-time-label: #7dd6a8;
 
@@ -85,6 +87,8 @@
   --color-destructive: var(--destructive);
   --color-destructive-border: var(--destructive-border);
   --color-attention: var(--attention);
+  --color-urgent: var(--urgent);
+  --color-urgent-foreground: var(--urgent-foreground);
   --color-project-time: var(--project-time);
   --color-project-time-label: var(--project-time-label);
   --color-border: var(--border);

@@ -8,6 +8,7 @@ from sqlmodel import Field, SQLModel
 
 from app.features.properties.models import MemberRole
 from app.features.steps.models import StepRead
+from app.shared.patch import PatchModel
 from app.shared.table_base import TableBase, enum_column
 
 
@@ -59,7 +60,9 @@ class ProjectCreate(SQLModel):
     due_date: date | None = None
 
 
-class ProjectUpdate(SQLModel):
+class ProjectUpdate(PatchModel):
+    clearable = frozenset({'description', 'due_date'})
+
     title: Title | None = None
     description: Description | None = None
     priority: ProjectPriority | None = None

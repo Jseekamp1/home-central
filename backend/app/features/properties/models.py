@@ -6,6 +6,7 @@ from pydantic import StringConstraints
 from sqlalchemy import UniqueConstraint
 from sqlmodel import Field, SQLModel
 
+from app.shared.patch import PatchModel
 from app.shared.table_base import TableBase, enum_column
 
 
@@ -74,7 +75,9 @@ class PropertyCreate(SQLModel):
     notes: Notes | None = None
 
 
-class PropertyUpdate(SQLModel):
+class PropertyUpdate(PatchModel):
+    clearable = frozenset({'address_line', 'notes'})
+
     name: Name | None = None
     kind: PropertyKind | None = None
     postal_code: PostalCode | None = None

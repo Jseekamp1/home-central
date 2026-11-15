@@ -6,6 +6,7 @@ from pydantic import Field as PydanticField
 from pydantic import StringConstraints
 from sqlmodel import Field, SQLModel
 
+from app.shared.patch import PatchModel
 from app.shared.table_base import TableBase
 
 Title = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]
@@ -38,7 +39,9 @@ class StepCreate(SQLModel):
     keep_with_next: bool = False
 
 
-class StepUpdate(SQLModel):
+class StepUpdate(PatchModel):
+    clearable = frozenset({'estimated_minutes', 'details'})
+
     title: Title | None = None
     details: Details | None = None
     estimated_minutes: Minutes | None = None

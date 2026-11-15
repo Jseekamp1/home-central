@@ -50,6 +50,7 @@ Make a new property useful in the first minute.
 - Run the questions again from property settings, without duplicating what's already there
 - Recurring tasks with simple timing: every N days/weeks/months/years after the last completion, or in set months. Due occurrences become maintenance projects
 - Property systems learned from the answers (checking "Change furnace filter" records a furnace)
+- To settle in planning: what notices that a task has come due. Nothing runs in the background today. Recommended: check whenever the app is opened (simple, no extra infrastructure), and move to a scheduled job when reminders need it (Milestone 10)
 
 ## 4. Talk out a project
 
@@ -81,6 +82,9 @@ The payoff: your week, planned.
 - Re-plans when project time or projects change, and shows what moved, with Undo
 - Optionally writes scheduled work back to Google Calendar
 - Users can pin blocks so they don't move
+- Steps that can't be scheduled are never silently skipped. Because project time is always filled and there is no waiting list, the project itself must say why a step isn't on the calendar:
+  - a step longer than your longest project-time window: "Too long to fit. Split it into smaller steps"
+  - a step without an estimate (including one cleared after the project was marked Ready): "Needs an estimate"
 
 ## 7. Materials, tools and inventory
 

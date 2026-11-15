@@ -15,7 +15,8 @@ Home Central is **time-first and voice-first**. Lists and settings support three
 ## Navigation
 
 - **Phone:** a bottom bar with Week, Projects, **Talk** (a large round button in the middle), Shop and More.
-- **Desktop:** the same items in a left sidebar, with Talk as a prominent button at its top.
+- **Desktop:** the same items in a left sidebar, with the property switcher at its top and Talk as a prominent button.
+- **More** holds everything without its own tab: property settings and "Add a property" today; Google Calendar, inventory and maintenance later.
 - **Property switcher:** the property name at the top of the screen. Tapping it opens a sheet listing **All properties** first, then each property with its color dot and your role, plus "Add a property" and that property's settings.
 - **All properties** mixes every property's items into one view: the Week strip stacks each day's segments in their property colors, window and item cards carry a color dot and the property name, and the Projects list shows the property on every card. Choosing one property filters back down, and project time is shown in green again.
 - Items appear only when their milestone ships. Until the Week screen exists (Milestone 6), Projects is the home screen; until the assistant exists (Milestone 4), there is no Talk button.
@@ -56,7 +57,7 @@ Property colors are used as dots, small bars and segments, never as text or fill
 
 **Type:** Geist for titles, Inter for body text, Geist Mono for times, durations and small labels.
 
-**Shape:** 12 px corners on panels and free-time outlines, 8 px on panels nested inside them. Touch targets are at least 44 px.
+**Shape:** 12 px corners on panels and free-time outlines, 8 px on panels nested inside them. Controls are at least 44 px on touch screens and may be more compact (never under 24 px) with a mouse; small chips keep their look and get an enlarged touch area instead.
 
 All text meets WCAG AA contrast (4.5:1) against the surface it sits on. Any new color pair must be checked before use.
 

@@ -21,6 +21,7 @@ Every path a person can take through Home Central. Update this table whenever a 
 | P9 | View a shared property | Viewer | Settings | Read-only details with a note explaining why | Settings | 2 | Built |
 | P10 | Delete a property | Owner | Settings → Delete | Confirmation focuses "Keep it" → Delete | Another property, or setup if none are left | 2 | Built |
 | P11 | Back out of deleting | Owner | Delete confirmation | "Keep it", Esc, or tap outside | Settings, nothing deleted | 2 | Built |
+| P17 | Get around the app | Any | Bottom bar (phone) or sidebar (desktop) | Projects · More; More lists property settings and "Add a property" | The chosen screen | 2 | Built |
 | P12 | Server unreachable | Any | Any screen | Error banner → Try again | Where they were | 2 | Built |
 | P13 | Invite someone to a property | Owner | Settings → Members | Enter email → choose role → Send | Invite pending until accepted | 10 | Planned |
 | P14 | Accept an invite | Invitee | Email link | Sign in or sign up → accept | The shared property, with their own color | 10 | Planned |
@@ -90,6 +91,7 @@ Shown after creating a property, so the app is useful from the first minute. Eve
 | W6 | Ask why something is scheduled | Any | Week item (tap) | Reason shown ("Urgent and overdue since Nov 10") | Week | 6 | Designed |
 | W7 | Pin an item | Editor | Week item | Pin → it won't be moved when re-planning | Week | 6 | Planned |
 | W8 | See everything across properties | Any, 2+ properties | Switcher → All properties | Each day's items from every property, in property colors | Week | 6 | Designed |
+| W10 | A step that can't be scheduled | Editor | Project detail | A step is longer than any project-time window, or has no estimate → the step is flagged with the reason → split it or add an estimate | Step gets scheduled | 6 | Planned |
 | W9 | No project time this day | Any | Week → a day without time | "No project time this day" → Add time | C2 / C4 | 6 | Designed |
 
 ## Materials, shopping and maintenance

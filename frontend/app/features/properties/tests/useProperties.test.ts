@@ -6,7 +6,7 @@ import type { Schemas } from '~/shared/api/types'
 type Property = Schemas['PropertyRead']
 
 function property(id: string, name: string): Property {
-  return { id, name, kind: 'home', postal_code: '55401', address_line: null, notes: null, my_role: 'owner' }
+  return { id, name, kind: 'home', postal_code: '55401', address_line: null, notes: null, my_role: 'owner', my_color: 'sky' }
 }
 
 // A small in-memory stand-in for the backend's /properties endpoints.

@@ -16,14 +16,14 @@ def require_property_role(
     property_id: uuid.UUID,
     user: User,
     minimum: MemberRole,
-) -> tuple[Property, MemberRole]:
-    """Return the property and the user's role, or raise.
+) -> tuple[Property, PropertyMember]:
+    """Return the property and the user's membership in it, or raise.
 
     Non-members get 404 so the API never reveals that a property exists.
     Members whose role is below `minimum` get 403.
     """
     row = session.exec(
-        select(Property, PropertyMember.role)
+        select(Property, PropertyMember)
         .join(PropertyMember, PropertyMember.property_id == Property.id)
         .where(Property.id == property_id, PropertyMember.user_id == user.id)
     ).first()
@@ -31,8 +31,8 @@ def require_property_role(
     if row is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Property not found")
 
-    property_, role = row
-    if _RANK[role] < _RANK[minimum]:
-        raise HTTPException(status.HTTP_403_FORBIDDEN, f"A {role.value} can't do this")
+    property_, membership = row
+    if _RANK[membership.role] < _RANK[minimum]:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, f"A {membership.role.value} can't do this")
 
-    return property_, role
+    return property_, membership

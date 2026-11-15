@@ -23,6 +23,22 @@ class MemberRole(str, Enum):
     owner = "owner"
 
 
+class PropertyColor(str, Enum):
+    """Palette keys; the frontend maps them to colors (see specs/design.md).
+
+    Order matters: a new property gets the first key its creator isn't using.
+    """
+
+    sky = "sky"
+    teal = "teal"
+    lime = "lime"
+    violet = "violet"
+    pink = "pink"
+    coral = "coral"
+    sand = "sand"
+    slate = "slate"
+
+
 Name = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=100)]
 PostalCode = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=20)]
 AddressLine = Annotated[str, StringConstraints(strip_whitespace=True, max_length=200)]
@@ -46,6 +62,8 @@ class PropertyMember(TableBase, table=True):
     property_id: uuid.UUID = Field(foreign_key="properties.id", ondelete="CASCADE", index=True)
     user_id: uuid.UUID = Field(foreign_key="users.id", ondelete="CASCADE", index=True)
     role: MemberRole = Field(sa_column=enum_column(MemberRole))
+    # Each member's own color for this property; personal, not shared.
+    color: PropertyColor = Field(default=PropertyColor.sky, sa_column=enum_column(PropertyColor))
 
 
 class PropertyCreate(SQLModel):
@@ -72,3 +90,8 @@ class PropertyRead(SQLModel):
     address_line: str | None
     notes: str | None
     my_role: MemberRole
+    my_color: PropertyColor
+
+
+class MyColorUpdate(SQLModel):
+    color: PropertyColor

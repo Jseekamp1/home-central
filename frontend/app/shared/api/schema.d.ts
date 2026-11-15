@@ -58,6 +58,26 @@ export interface paths {
         patch: operations["update_property_properties__property_id__patch"];
         trace?: never;
     };
+    "/properties/{property_id}/my-color": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Set My Color
+         * @description Change the caller's own color for this property. Any member may do this.
+         */
+        put: operations["set_my_color_properties__property_id__my_color_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -89,6 +109,18 @@ export interface components {
          * @enum {string}
          */
         MemberRole: "viewer" | "editor" | "owner";
+        /** MyColorUpdate */
+        MyColorUpdate: {
+            color: components["schemas"]["PropertyColor"];
+        };
+        /**
+         * PropertyColor
+         * @description Palette keys; the frontend maps them to colors (see specs/design.md).
+         *
+         *     Order matters: a new property gets the first key its creator isn't using.
+         * @enum {string}
+         */
+        PropertyColor: "sky" | "teal" | "lime" | "violet" | "pink" | "coral" | "sand" | "slate";
         /** PropertyCreate */
         PropertyCreate: {
             /** Name */
@@ -123,6 +155,7 @@ export interface components {
             /** Notes */
             notes: string | null;
             my_role: components["schemas"]["MemberRole"];
+            my_color: components["schemas"]["PropertyColor"];
         };
         /** PropertyUpdate */
         PropertyUpdate: {
@@ -315,6 +348,41 @@ export interface operations {
         requestBody: {
             content: {
                 "application/json": components["schemas"]["PropertyUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PropertyRead"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_my_color_properties__property_id__my_color_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                property_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MyColorUpdate"];
             };
         };
         responses: {

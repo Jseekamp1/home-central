@@ -57,6 +57,7 @@ PERMISSIONS = {
     #             viewer, editor, owner, non-member
     "read":      (200,    200,    200,   404),
     "update":    (403,    200,    200,   404),
+    "set_color": (200,    200,    200,   404),
     "delete":    (403,    403,    204,   404),
 }
 ROLES = ["viewer", "editor", "owner", None]
@@ -77,10 +78,49 @@ def test_property_permissions(client, session, make_user, act_as, action, role_i
         response = client.get(f"/properties/{property_id}")
     elif action == "update":
         response = client.patch(f"/properties/{property_id}", json={"name": "Renamed"})
+    elif action == "set_color":
+        response = client.put(f"/properties/{property_id}/my-color", json={"color": "violet"})
     else:
         response = client.delete(f"/properties/{property_id}")
 
     assert response.status_code == PERMISSIONS[action][role_index]
+
+
+def test_new_property_gets_the_first_color_you_are_not_using(client):
+    first = create_property(client, name="Our House").json()
+    second = create_property(client, name="Cabin").json()
+
+    assert first["my_color"] == "sky"
+    assert second["my_color"] == "teal"
+
+    client.put(f"/properties/{first['id']}/my-color", json={"color": "pink"})
+    third = create_property(client, name="Church").json()
+
+    assert third["my_color"] == "sky"
+
+
+def test_colors_are_personal(client, session, make_user, act_as):
+    owner = make_user("owner@example.com")
+    sibling = make_user("sibling@example.com")
+    act_as(owner)
+    property_id = create_property(client, name="Mom's House").json()["id"]
+    add_member(session, property_id, sibling, "editor")
+
+    act_as(sibling)
+    changed = client.put(f"/properties/{property_id}/my-color", json={"color": "coral"})
+
+    assert changed.status_code == 200
+    assert changed.json()["my_color"] == "coral"
+    act_as(owner)
+    assert client.get(f"/properties/{property_id}").json()["my_color"] == "sky"
+
+
+def test_unknown_color_is_rejected(client):
+    property_id = create_property(client).json()["id"]
+
+    response = client.put(f"/properties/{property_id}/my-color", json={"color": "gold"})
+
+    assert response.status_code == 422
 
 
 def test_partial_update_changes_only_given_fields(client):

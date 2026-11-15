@@ -41,7 +41,7 @@ Conventions: UUID primary keys, `created_at` and `updated_at` on every table, mo
 |---|---|---|
 | `users` | email, display_name | 1 |
 | `properties` | name, kind (`home`, `rental`, `family`, `organization`, `other`), address_line, postal_code, climate_zone, last_spring_frost (month-day), first_fall_frost (month-day), year_built, square_feet, notes | 2 (details in 8) |
-| `property_members` | property_id, user_id, role (`owner`, `editor`, `viewer`). Unique per property and user. | 2 |
+| `property_members` | property_id, user_id, role (`owner`, `editor`, `viewer`), color (the member's own color for this property; palette in `specs/design.md`). Unique per property and user. | 2 |
 | `property_assets` | property_id, kind (`hvac`, `water_heater`, `appliance`, `lawn`, …), name, brand, model, install_date, specs (JSON, e.g. filter size, grass type) | 8 |
 
 The frost dates are estimated by the LLM from the postal code when the property profile is filled in (Milestone 8). The user sees and confirms them, and can change them at any time. A lawn is an asset, so its grass type can drive which seasonal tasks apply.

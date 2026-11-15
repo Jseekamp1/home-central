@@ -16,7 +16,8 @@ Home Central is **time-first and voice-first**. Lists and settings support three
 
 - **Phone:** a bottom bar with Week, Projects, **Talk** (a large round button in the middle), Shop and More.
 - **Desktop:** the same items in a left sidebar, with Talk as a prominent button at its top.
-- **Property switcher:** the property name at the top of the screen. Tapping it opens a sheet listing your properties with your role in each, plus "Add a property" and that property's settings.
+- **Property switcher:** the property name at the top of the screen. Tapping it opens a sheet listing **All properties** first, then each property with its color dot and your role, plus "Add a property" and that property's settings.
+- **All properties** mixes every property's items into one view: the Week strip stacks each day's segments in their property colors, window and item cards carry a color dot and the property name, and the Projects list shows the property on every card. Choosing one property filters back down, and project time is shown in green again.
 - Items appear only when their milestone ships. Until the Week screen exists (Milestone 5), Projects is the home screen; until the assistant exists (Milestone 3), there is no Talk button.
 
 ## Visual system: graphite and green
@@ -35,6 +36,23 @@ One theme, between dark and light: a mid-graphite background, not black. Everyth
 | Free-time line | `#5FC891` dashed; label `#7DD6A8` | Free time outlines and their labels |
 | Attention | `#F2B860` | Unconfirmed guesses, as a dashed `#F2B860` outline with `#F2B860` text |
 | Danger | `#F28B82` on background; urgent badge `#F8D3D0` / `#8F1D16` | Removed time, destructive actions, urgent |
+
+### Property colors
+
+Each person picks a color for each property they can see; it's personal, not shared. A new property gets the first color that person isn't using yet.
+
+| Key | Value | Contrast on background / panel |
+|---|---|---|
+| `sky` | `#6CB4EE` | 6.0 / 5.1 |
+| `teal` | `#4FD1C5` | 7.2 / 6.1 |
+| `lime` | `#A3D977` | 8.2 / 6.9 |
+| `violet` | `#A78BFA` | 5.0 / 4.2 |
+| `pink` | `#F28CB8` | 5.9 / 5.0 |
+| `coral` | `#F4977A` | 6.1 / 5.1 |
+| `sand` | `#D9C3A0` | 7.9 / 6.6 |
+| `slate` | `#9AA9BA` | 5.6 / 4.7 |
+
+Property colors are used as dots, small bars and segments, never as text or fill behind text. Color is never the only cue: wherever it marks a property, the property's name is shown or announced too.
 
 **Type:** Geist for titles, Inter for body text, Geist Mono for times, durations and small labels.
 

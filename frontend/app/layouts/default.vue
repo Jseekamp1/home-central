@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-dvh">
     <header class="mx-auto flex max-w-3xl items-center justify-between gap-2 px-4 pt-3 pb-1">
-      <PropertySwitcher v-if="current" />
+      <PropertySwitcher v-if="current || isAll" />
       <span v-else class="flex min-h-11 items-center font-display text-[17px] font-semibold">Home Central</span>
     </header>
 
@@ -22,6 +22,6 @@ import { Button } from '~/shared/components/ui/button'
 import PropertySwitcher from '~/features/properties/components/PropertySwitcher.vue'
 import { useProperties } from '~/features/properties/composables/useProperties'
 
-const { current, error, loaded, load } = useProperties()
+const { current, isAll, error, loaded, load } = useProperties()
 const loadFailed = computed(() => !loaded.value && !!error.value)
 </script>

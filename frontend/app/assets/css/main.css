@@ -45,6 +45,16 @@
   --border: #474d54;
   --input: #5a6168;
   --ring: #3ccb7f;
+
+  /* Property colors: each person picks one per property (specs/design.md). */
+  --property-sky: #6cb4ee;
+  --property-teal: #4fd1c5;
+  --property-lime: #a3d977;
+  --property-violet: #a78bfa;
+  --property-pink: #f28cb8;
+  --property-coral: #f4977a;
+  --property-sand: #d9c3a0;
+  --property-slate: #9aa9ba;
 }
 
 @theme inline {
@@ -134,6 +144,11 @@
     padding: 0 !important;
     border: 0 !important;
     white-space: nowrap !important;
+  }
+
+  /* Property color marks carry information, so keep their color in forced-colors mode. */
+  .property-color {
+    forced-color-adjust: none;
   }
 
   /* Field error text is shown only once the field is :user-invalid. */

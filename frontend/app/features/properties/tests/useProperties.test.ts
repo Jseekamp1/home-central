@@ -26,6 +26,11 @@ function fakeApi(initial: Property[]) {
       return { data: created as T, error: null, status: 201 }
     }
     const id = path.split('/')[2]
+    if (path.endsWith('/my-color') && method === 'PUT') {
+      const row = rows.find(r => r.id === id)!
+      row.my_color = JSON.parse(String(init.body)).color
+      return { data: { ...row } as T, error: null, status: 200 }
+    }
     if (method === 'DELETE') {
       rows.splice(rows.findIndex(r => r.id === id), 1)
       return { data: null, error: null, status: 204 }
@@ -88,6 +93,41 @@ describe('properties store', () => {
     expect(created?.name).toBe('Grace Church')
     expect(store.current.value?.name).toBe('Grace Church')
     expect(store.properties.value.map(p => p.name)).toEqual(['Grace Church', 'Our House'])
+  })
+
+  it('remembers All properties and restores it next time', async () => {
+    const storage = memoryStorage()
+    const api = fakeApi([property('1', 'Our House'), property('2', 'Cabin')])
+    const store = createPropertiesStore(api, storage)
+    await store.load()
+
+    store.select('all')
+
+    expect(store.isAll.value).toBe(true)
+    expect(store.current.value).toBeNull()
+
+    const reopened = createPropertiesStore(api, storage)
+    await reopened.load()
+    expect(reopened.isAll.value).toBe(true)
+  })
+
+  it('shows the only property instead of All properties when there is just one', async () => {
+    const store = createPropertiesStore(fakeApi([property('1', 'Our House')]), memoryStorage({ [KEY]: 'all' }))
+
+    await store.load()
+
+    expect(store.isAll.value).toBe(false)
+    expect(store.current.value?.name).toBe('Our House')
+  })
+
+  it('changes your color for a property', async () => {
+    const store = createPropertiesStore(fakeApi([property('1', 'Our House')]), memoryStorage())
+    await store.load()
+
+    const ok = await store.setColor('1', 'violet')
+
+    expect(ok).toBe(true)
+    expect(store.properties.value[0]?.my_color).toBe('violet')
   })
 
   it('moves to another property when the current one is deleted', async () => {

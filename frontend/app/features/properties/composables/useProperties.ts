@@ -5,6 +5,10 @@ import type { Schemas } from '~/shared/api/types'
 type Property = Schemas['PropertyRead']
 type PropertyCreate = Schemas['PropertyCreate']
 type PropertyUpdate = Schemas['PropertyUpdate']
+type PropertyColor = Schemas['PropertyColor']
+
+/** Selection value meaning "every property at once". */
+export const ALL = 'all'
 
 interface Api {
   request<T>(path: string, init?: RequestInit): Promise<ApiResult<T>>
@@ -50,6 +54,9 @@ export function createPropertiesStore(api: Api, storage: KeyValueStorage) {
 
   const current = computed(() => properties.value.find(p => p.id === currentId.value) ?? null)
   const needsSetup = computed(() => loaded.value && properties.value.length === 0)
+  // Colors and "All properties" only mean something with two or more properties.
+  const hasMultiple = computed(() => properties.value.length > 1)
+  const isAll = computed(() => currentId.value === ALL && hasMultiple.value)
 
   function select(id: string | null) {
     currentId.value = id
@@ -59,6 +66,10 @@ export function createPropertiesStore(api: Api, storage: KeyValueStorage) {
 
   function selectRememberedOrFirst() {
     const remembered = storage.get(CURRENT_KEY)
+    if (remembered === ALL && hasMultiple.value) {
+      select(ALL)
+      return
+    }
     const match = properties.value.find(p => p.id === remembered)
     select(match?.id ?? properties.value[0]?.id ?? null)
   }
@@ -109,11 +120,25 @@ export function createPropertiesStore(api: Api, storage: KeyValueStorage) {
       return false
     }
     properties.value = properties.value.filter(p => p.id !== id)
-    if (currentId.value === id) select(properties.value[0]?.id ?? null)
+    const allNoLongerMeaningful = currentId.value === ALL && !hasMultiple.value
+    if (currentId.value === id || allNoLongerMeaningful) select(properties.value[0]?.id ?? null)
     return true
   }
 
-  return { properties, current, loaded, loading, error, needsSetup, load, select, create, update, remove }
+  /** Change the signed-in user's own color for a property. */
+  async function setColor(id: string, color: PropertyColor): Promise<boolean> {
+    error.value = null
+    const result = await api.request<Property>(`/properties/${id}/my-color`, { method: 'PUT', body: JSON.stringify({ color }) })
+    if (result.error || !result.data) {
+      error.value = result.error ?? 'Could not change the color'
+      return false
+    }
+    const saved = result.data
+    properties.value = properties.value.map(p => (p.id === id ? saved : p))
+    return true
+  }
+
+  return { properties, current, isAll, hasMultiple, loaded, loading, error, needsSetup, load, select, create, update, remove, setColor }
 }
 
 let appStore: ReturnType<typeof createPropertiesStore> | null = null

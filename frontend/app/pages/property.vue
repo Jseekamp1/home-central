@@ -5,6 +5,12 @@
       <p class="text-muted-foreground">{{ current.name }} · {{ roleLabel(current.my_role) }}</p>
     </div>
 
+    <div v-if="hasMultiple" class="flex flex-col gap-2 rounded-xl border border-border bg-card p-5">
+      <ColorPicker :key="current.id" :model-value="current.my_color" @update:model-value="onColor" />
+      <p class="text-sm text-muted-foreground">Only you see this color. Others who share {{ current.name }} pick their own.</p>
+      <p v-if="colorNotice" role="status" class="text-sm" :class="colorFailed ? 'text-destructive' : 'text-project-time-label'">{{ colorNotice }}</p>
+    </div>
+
     <p v-if="isViewer" class="rounded-lg border border-border bg-card px-4 py-3 text-sm text-muted-foreground">
       You can view this property, but only its owner or editors can change it.
     </p>
@@ -55,17 +61,34 @@
       </form>
     </dialog>
   </section>
+
+  <section v-else-if="isAll" class="mx-auto flex max-w-lg flex-col gap-3">
+    <h1 class="text-3xl font-bold tracking-tight">Property settings</h1>
+    <p class="text-muted-foreground">Choose a property from the switcher at the top to see its settings.</p>
+  </section>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { Button } from '~/shared/components/ui/button'
+import ColorPicker from '~/features/properties/components/ColorPicker.vue'
 import PropertyForm from '~/features/properties/components/PropertyForm.vue'
 import { useProperties } from '~/features/properties/composables/useProperties'
 import { roleLabel } from '~/features/properties/kinds'
 import type { Schemas } from '~/shared/api/types'
 
-const { current, error, update, remove } = useProperties()
+const { current, isAll, hasMultiple, error, update, remove, setColor } = useProperties()
+
+const colorNotice = ref('')
+const colorFailed = ref(false)
+
+async function onColor(color: Schemas['PropertyColor']) {
+  if (!current.value) return
+  colorNotice.value = ''
+  const ok = await setColor(current.value.id, color)
+  colorFailed.value = !ok
+  colorNotice.value = ok ? 'Color saved.' : (error.value ?? 'Could not change the color')
+}
 
 const isViewer = computed(() => current.value?.my_role === 'viewer')
 const isOwner = computed(() => current.value?.my_role === 'owner')

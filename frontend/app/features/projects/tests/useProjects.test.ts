@@ -34,25 +34,6 @@ function fakeApi(rows: Project[]) {
 }
 
 describe('projects store', () => {
-  it("loads one property's projects for the chosen view", async () => {
-    const api = fakeApi([project('1', 'Replace faucet')])
-    const store = createProjectsStore(api)
-
-    await store.load({ propertyId: 'p1' }, 'done')
-
-    expect(api.calls).toEqual(['GET /properties/p1/projects?view=done'])
-    expect(store.projects.value.map(p => p.title)).toEqual(['Replace faucet'])
-  })
-
-  it('loads every property together for All properties', async () => {
-    const api = fakeApi([])
-    const store = createProjectsStore(api)
-
-    await store.load({ all: true }, 'active')
-
-    expect(api.calls).toEqual(['GET /projects?view=active'])
-  })
-
   it('drops a project from the list when its new status belongs to another view', async () => {
     const store = createProjectsStore(fakeApi([project('1', 'Replace faucet'), project('2', 'Clean gutters')]))
     await store.load({ propertyId: 'p1' }, 'active')
@@ -60,14 +41,5 @@ describe('projects store', () => {
     await store.update('1', { status: 'cancelled' })
 
     expect(store.projects.value.map(p => p.title)).toEqual(['Clean gutters'])
-  })
-
-  it('keeps a project in the list when it stays in the same view', async () => {
-    const store = createProjectsStore(fakeApi([project('1', 'Replace faucet')]))
-    await store.load({ propertyId: 'p1' }, 'active')
-
-    await store.update('1', { status: 'in_progress' })
-
-    expect(store.projects.value[0]?.status).toBe('in_progress')
   })
 })

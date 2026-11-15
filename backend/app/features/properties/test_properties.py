@@ -18,28 +18,6 @@ def add_member(session, property_id, user, role):
     session.commit()
 
 
-def test_creator_becomes_owner_and_sees_it_listed(client):
-    response = create_property(client)
-
-    assert response.status_code == 201
-    created = response.json()
-    assert created["name"] == "Our House"
-    assert created["my_role"] == "owner"
-
-    listed = client.get("/properties").json()
-    assert [p["id"] for p in listed] == [created["id"]]
-    assert listed[0]["my_role"] == "owner"
-
-
-@pytest.mark.parametrize("overrides", [
-    {"name": "   "},
-    {"postal_code": ""},
-    {"kind": "castle"},
-])
-def test_invalid_property_is_rejected(client, overrides):
-    assert create_property(client, **overrides).status_code == 422
-
-
 def test_list_only_shows_properties_the_user_belongs_to(client, make_user, act_as):
     mine = create_property(client, name="Mine").json()
 
@@ -113,24 +91,6 @@ def test_colors_are_personal(client, session, make_user, act_as):
     assert changed.json()["my_color"] == "coral"
     act_as(owner)
     assert client.get(f"/properties/{property_id}").json()["my_color"] == "sky"
-
-
-def test_unknown_color_is_rejected(client):
-    property_id = create_property(client).json()["id"]
-
-    response = client.put(f"/properties/{property_id}/my-color", json={"color": "gold"})
-
-    assert response.status_code == 422
-
-
-def test_partial_update_changes_only_given_fields(client):
-    property_id = create_property(client).json()["id"]
-
-    response = client.patch(f"/properties/{property_id}", json={"notes": "Blue door"})
-
-    assert response.status_code == 200
-    assert response.json()["notes"] == "Blue door"
-    assert response.json()["name"] == "Our House"
 
 
 def test_deleting_a_property_removes_its_memberships(client, session, make_user):

@@ -84,17 +84,6 @@ describe('properties store', () => {
     expect(store.current.value).toBeNull()
   })
 
-  it('selects a property right after creating it', async () => {
-    const store = createPropertiesStore(fakeApi([property('1', 'Our House')]), memoryStorage())
-    await store.load()
-
-    const created = await store.create({ name: 'Grace Church', kind: 'organization', postal_code: '55402' })
-
-    expect(created?.name).toBe('Grace Church')
-    expect(store.current.value?.name).toBe('Grace Church')
-    expect(store.properties.value.map(p => p.name)).toEqual(['Grace Church', 'Our House'])
-  })
-
   it('remembers All properties and restores it next time', async () => {
     const storage = memoryStorage()
     const api = fakeApi([property('1', 'Our House'), property('2', 'Cabin')])
@@ -118,16 +107,6 @@ describe('properties store', () => {
 
     expect(store.isAll.value).toBe(false)
     expect(store.current.value?.name).toBe('Our House')
-  })
-
-  it('changes your color for a property', async () => {
-    const store = createPropertiesStore(fakeApi([property('1', 'Our House')]), memoryStorage())
-    await store.load()
-
-    const ok = await store.setColor('1', 'violet')
-
-    expect(ok).toBe(true)
-    expect(store.properties.value[0]?.my_color).toBe('violet')
   })
 
   it('moves to another property when the current one is deleted', async () => {

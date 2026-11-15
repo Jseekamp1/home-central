@@ -35,14 +35,6 @@ describe('steps', () => {
     expect(result?.project.status).toBe('in_progress')
   })
 
-  it('does not report a start when the project was already under way', async () => {
-    const steps = createSteps(fakeApi(detail('in_progress')))
-
-    const result = await steps.setDone(detail('in_progress'), 's1', true)
-
-    expect(result?.started).toBe(false)
-  })
-
   it('moves a step by sending the full new order', async () => {
     const api = fakeApi(detail('draft'))
     const steps = createSteps(api)

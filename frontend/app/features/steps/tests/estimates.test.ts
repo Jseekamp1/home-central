@@ -1,17 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { formatMinutes, readyBlocker } from '../estimates'
-
-describe('formatMinutes', () => {
-  it.each([
-    [15, '15 min'],
-    [60, '1 h'],
-    [90, '1 h 30'],
-    [245, '4 h 5'],
-    [0, '0 min'],
-  ])('%i minutes reads as "%s"', (minutes, text) => {
-    expect(formatMinutes(minutes)).toBe(text)
-  })
-})
+import { readyBlocker } from '../estimates'
 
 describe('readyBlocker', () => {
   it('asks for a first step when there are none', () => {

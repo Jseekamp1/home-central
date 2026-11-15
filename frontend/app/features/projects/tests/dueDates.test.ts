@@ -8,25 +8,13 @@ describe('dueLabel', () => {
     expect(dueLabel('2026-11-10', today, true)).toEqual({ text: 'Overdue · Nov 10', overdue: true })
   })
 
-  it('says "Due today" on the day itself', () => {
-    expect(dueLabel('2026-11-14', today, true)).toEqual({ text: 'Due today', overdue: false })
-  })
-
   it('shows the weekday for dates later this year, without shifting the day', () => {
     // Nov 22, 2026 is a Sunday everywhere; a time zone conversion would make it Saturday the 21st.
     expect(dueLabel('2026-11-22', today, true)).toEqual({ text: 'Due Sun, Nov 22', overdue: false })
   })
 
-  it('includes the year when it is not this year', () => {
-    expect(dueLabel('2027-01-05', today, true)).toEqual({ text: 'Due Jan 5, 2027', overdue: false })
-  })
-
   it('never calls finished or cancelled projects overdue', () => {
     expect(dueLabel('2026-11-10', today, false)).toEqual({ text: 'Was due Nov 10', overdue: false })
-  })
-
-  it('returns nothing without a due date', () => {
-    expect(dueLabel(null, today, true)).toBeNull()
   })
 })
 

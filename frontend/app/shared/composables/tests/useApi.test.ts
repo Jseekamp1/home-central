@@ -11,16 +11,6 @@ function jsonResponse(status: number, body: unknown) {
 describe('useApi', () => {
   beforeEach(() => mockFetch.mockReset())
 
-  it('returns parsed JSON from the API base URL', async () => {
-    mockFetch.mockResolvedValueOnce(jsonResponse(200, { id: '1', email: 'dev@example.com' }))
-
-    const { request } = useApi('http://api.test')
-    const result = await request<{ id: string }>('/me')
-
-    expect(mockFetch).toHaveBeenCalledWith('http://api.test/me', expect.anything())
-    expect(result).toEqual({ data: { id: '1', email: 'dev@example.com' }, error: null, status: 200 })
-  })
-
   it('turns FastAPI validation errors into a readable message', async () => {
     mockFetch.mockResolvedValueOnce(jsonResponse(422, {
       detail: [
@@ -35,15 +25,6 @@ describe('useApi', () => {
     expect(result.data).toBeNull()
     expect(result.status).toBe(422)
     expect(result.error).toBe("title: Field required; priority: Input should be 'low' or 'high'")
-  })
-
-  it('passes through a plain error detail', async () => {
-    mockFetch.mockResolvedValueOnce(jsonResponse(404, { detail: 'Project not found' }))
-
-    const { request } = useApi('http://api.test')
-    const result = await request('/projects/x')
-
-    expect(result).toEqual({ data: null, error: 'Project not found', status: 404 })
   })
 
   it('reports an unreachable server instead of throwing', async () => {

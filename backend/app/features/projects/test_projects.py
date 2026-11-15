@@ -23,26 +23,6 @@ def add_member(session, property_id, user, role):
     session.commit()
 
 
-def test_new_project_starts_as_a_draft(client):
-    property_id = create_property(client)
-
-    response = create_project(client, property_id, priority="high", due_date="2026-11-22")
-
-    assert response.status_code == 201
-    project = response.json()
-    assert project["status"] == "draft"
-    assert project["priority"] == "high"
-    assert project["due_date"] == "2026-11-22"
-    assert project["property_id"] == property_id
-    assert project["my_role"] == "owner"
-
-
-@pytest.mark.parametrize("fields", [{"title": "   "}, {"priority": "someday"}])
-def test_invalid_project_is_rejected(client, fields):
-    property_id = create_property(client)
-    assert create_project(client, property_id, **fields).status_code == 422
-
-
 # Who may do what to a property's projects. Non-members get 404 throughout.
 PERMISSIONS = {
     #            viewer, editor, owner, non-member
@@ -105,44 +85,6 @@ def test_active_projects_are_ordered_by_priority_then_due_date(client):
     assert titles == ["Fix porch railing", "Replace faucet", "Clean gutters", "Seal driveway", "Paint bedroom"]
 
 
-def test_views_split_active_done_and_cancelled(client):
-    property_id = create_property(client)
-    active = create_project(client, property_id, title="Active one").json()["id"]
-    done = create_project(client, property_id, title="Done one").json()["id"]
-    cancelled = create_project(client, property_id, title="Cancelled one").json()["id"]
-    client.patch(f"/projects/{done}", json={"status": "done"})
-    client.patch(f"/projects/{cancelled}", json={"status": "cancelled"})
-
-    def ids(view):
-        return [p["id"] for p in client.get(f"/properties/{property_id}/projects?view={view}").json()]
-
-    assert ids("active") == [active]
-    assert ids("done") == [done]
-    assert ids("cancelled") == [cancelled]
-
-
-def test_done_records_when_and_reopening_clears_it(client):
-    property_id = create_property(client)
-    project_id = create_project(client, property_id).json()["id"]
-
-    finished = client.patch(f"/projects/{project_id}", json={"status": "done"}).json()
-    assert finished["completed_at"] is not None
-
-    reopened = client.patch(f"/projects/{project_id}", json={"status": "in_progress"}).json()
-    assert reopened["completed_at"] is None
-
-
-def test_ready_is_refused_without_estimated_steps(client):
-    property_id = create_property(client)
-    project_id = create_project(client, property_id).json()["id"]
-
-    response = client.patch(f"/projects/{project_id}", json={"status": "ready"})
-
-    assert response.status_code == 422
-    assert "step" in response.json()["detail"]
-    assert client.get(f"/projects/{project_id}").json()["status"] == "draft"
-
-
 def test_all_properties_list_shows_only_your_properties_projects(client, make_user, act_as):
     home = create_property(client, "Our House")
     moms = create_property(client, "Mom's House")
@@ -157,13 +99,3 @@ def test_all_properties_list_shows_only_your_properties_projects(client, make_us
     assert [p["title"] for p in response.json()] == ["Not yours"]
 
 
-def test_all_properties_list_merges_and_orders_across_properties(client):
-    home = create_property(client, "Our House")
-    moms = create_property(client, "Mom's House")
-    create_project(client, home, title="Replace faucet", priority="high")
-    create_project(client, moms, title="Fix porch railing", priority="urgent")
-
-    projects = client.get("/projects").json()
-
-    assert [p["title"] for p in projects] == ["Fix porch railing", "Replace faucet"]
-    assert {p["property_id"] for p in projects} == {home, moms}

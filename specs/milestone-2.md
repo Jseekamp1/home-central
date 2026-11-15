@@ -1,6 +1,6 @@
 # Milestone 2 — Properties and Projects
 
-**Status:** Approved
+**Status:** Approved, implemented
 
 ## Goal
 

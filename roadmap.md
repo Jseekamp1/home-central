@@ -7,7 +7,7 @@ The order delivers value from the first minute (setup questions), then the core 
 | # | Milestone | Status |
 |---|---|---|
 | 1 | Foundation reset | Done |
-| 2 | Properties and projects | In progress |
+| 2 | Properties and projects | Done |
 | 3 | Setup questions and recurring basics | Not started |
 | 4 | Talk out a project | Not started |
 | 5 | Project time and Google Calendar | Not started |

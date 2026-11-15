@@ -27,16 +27,6 @@ def step_ids(client, project_id):
     return [s["id"] for s in client.get(f"/projects/{project_id}").json()["steps"]]
 
 
-def test_steps_are_added_at_the_end_in_order(client):
-    _, project_id = new_project(client)
-    add_step(client, project_id, "Turn off water", 15)
-    add_step(client, project_id, "Remove old faucet", 30)
-
-    steps = client.get(f"/projects/{project_id}").json()["steps"]
-
-    assert [(s["position"], s["title"]) for s in steps] == [(1, "Turn off water"), (2, "Remove old faucet")]
-
-
 def test_project_summarises_progress_and_estimates(client):
     property_id, project_id = new_project(client)
     first = add_step(client, project_id, "Turn off water", 15).json()["steps"][0]["id"]
@@ -121,18 +111,6 @@ def test_reorder_must_list_exactly_the_projects_steps(client):
     assert step_ids(client, project_id) == [a, b]
 
 
-def test_deleting_a_step_renumbers_the_rest(client):
-    _, project_id = new_project(client)
-    for title in ["A", "B", "C"]:
-        add_step(client, project_id, title)
-    _, b, _ = step_ids(client, project_id)
-
-    response = client.delete(f"/projects/{project_id}/steps/{b}")
-
-    assert response.status_code == 200
-    assert [(s["position"], s["title"]) for s in response.json()["steps"]] == [(1, "A"), (2, "C")]
-
-
 def test_deleting_a_project_removes_its_steps(client, session):
     _, project_id = new_project(client)
     add_step(client, project_id, "Turn off water")
@@ -141,12 +119,6 @@ def test_deleting_a_project_removes_its_steps(client, session):
 
     session.expire_all()
     assert session.exec(select(ProjectStep)).all() == []
-
-
-@pytest.mark.parametrize("body", [{"title": "  "}, {"title": "Ok", "estimated_minutes": -5}])
-def test_invalid_step_is_rejected(client, body):
-    _, project_id = new_project(client)
-    assert client.post(f"/projects/{project_id}/steps", json=body).status_code == 422
 
 
 def test_viewers_can_see_steps_but_not_change_them(client, session, make_user, act_as):

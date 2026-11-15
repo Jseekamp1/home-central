@@ -135,6 +135,58 @@ export interface paths {
         patch: operations["update_project_projects__project_id__patch"];
         trace?: never;
     };
+    "/projects/{project_id}/steps": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Add Step */
+        post: operations["add_step_projects__project_id__steps_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/projects/{project_id}/steps/{step_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Step */
+        delete: operations["delete_step_projects__project_id__steps__step_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Step */
+        patch: operations["update_step_projects__project_id__steps__step_id__patch"];
+        trace?: never;
+    };
+    "/projects/{project_id}/steps/order": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Reorder Steps */
+        put: operations["reorder_steps_projects__project_id__steps_order_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -181,6 +233,50 @@ export interface components {
             /** Due Date */
             due_date?: string | null;
         };
+        /** ProjectDetail */
+        ProjectDetail: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Property Id
+             * Format: uuid
+             */
+            property_id: string;
+            /** Title */
+            title: string;
+            /** Description */
+            description: string | null;
+            status: components["schemas"]["ProjectStatus"];
+            priority: components["schemas"]["ProjectPriority"];
+            /** Due Date */
+            due_date: string | null;
+            /** Completed At */
+            completed_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            my_role: components["schemas"]["MemberRole"];
+            /** Step Count */
+            step_count: number;
+            /** Done Step Count */
+            done_step_count: number;
+            /** Estimated Minutes */
+            estimated_minutes: number;
+            /** Unestimated Step Count */
+            unestimated_step_count: number;
+            /** Steps */
+            steps: components["schemas"]["StepRead"][];
+        };
         /**
          * ProjectPriority
          * @enum {string}
@@ -219,6 +315,14 @@ export interface components {
              */
             updated_at: string;
             my_role: components["schemas"]["MemberRole"];
+            /** Step Count */
+            step_count: number;
+            /** Done Step Count */
+            done_step_count: number;
+            /** Estimated Minutes */
+            estimated_minutes: number;
+            /** Unestimated Step Count */
+            unestimated_step_count: number;
         };
         /**
          * ProjectStatus
@@ -296,6 +400,67 @@ export interface components {
             address_line?: string | null;
             /** Notes */
             notes?: string | null;
+        };
+        /** StepCreate */
+        StepCreate: {
+            /** Title */
+            title: string;
+            /** Details */
+            details?: string | null;
+            /** Estimated Minutes */
+            estimated_minutes?: number | null;
+            /**
+             * Wait After Minutes
+             * @default 0
+             */
+            wait_after_minutes: number;
+            /**
+             * Keep With Next
+             * @default false
+             */
+            keep_with_next: boolean;
+        };
+        /** StepOrder */
+        StepOrder: {
+            /** Step Ids */
+            step_ids: string[];
+        };
+        /** StepRead */
+        StepRead: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Position */
+            position: number;
+            /** Title */
+            title: string;
+            /** Details */
+            details: string | null;
+            /** Estimated Minutes */
+            estimated_minutes: number | null;
+            /** Wait After Minutes */
+            wait_after_minutes: number;
+            /** Keep With Next */
+            keep_with_next: boolean;
+            /** Done At */
+            done_at: string | null;
+        };
+        /** StepUpdate */
+        StepUpdate: {
+            /** Title */
+            title?: string | null;
+            /** Details */
+            details?: string | null;
+            /** Estimated Minutes */
+            estimated_minutes?: number | null;
+            /** Wait After Minutes */
+            wait_after_minutes?: number | null;
+            /** Keep With Next */
+            keep_with_next?: boolean | null;
+            /** Done */
+            done?: boolean | null;
         };
         /** UserRead */
         UserRead: {
@@ -650,7 +815,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ProjectRead"];
+                    "application/json": components["schemas"]["ProjectDetail"];
                 };
             };
             /** @description Validation Error */
@@ -714,7 +879,145 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ProjectRead"];
+                    "application/json": components["schemas"]["ProjectDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    add_step_projects__project_id__steps_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StepCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProjectDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_step_projects__project_id__steps__step_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                step_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProjectDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_step_projects__project_id__steps__step_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+                step_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StepUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProjectDetail"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reorder_steps_projects__project_id__steps_order_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                project_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StepOrder"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProjectDetail"];
                 };
             };
             /** @description Validation Error */

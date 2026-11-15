@@ -6,6 +6,7 @@ table models here.
 
 from app.features.projects.models import Project
 from app.features.properties.models import Property, PropertyMember
+from app.features.steps.models import ProjectStep
 from app.features.users.models import User
 
-__all__ = ["Project", "Property", "PropertyMember", "User"]
+__all__ = ["Project", "ProjectStep", "Property", "PropertyMember", "User"]

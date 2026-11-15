@@ -9,6 +9,7 @@ function project(id: string, title: string, status: Project['status'] = 'draft')
   return {
     id, title, status, property_id: 'p1', description: null, priority: 'medium', due_date: null,
     completed_at: null, created_at: '2026-11-14T00:00:00Z', updated_at: '2026-11-14T00:00:00Z', my_role: 'owner',
+    step_count: 0, done_step_count: 0, estimated_minutes: 0, unestimated_step_count: 0,
   }
 }
 

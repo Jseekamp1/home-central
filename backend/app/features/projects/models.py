@@ -7,6 +7,7 @@ from pydantic import StringConstraints
 from sqlmodel import Field, SQLModel
 
 from app.features.properties.models import MemberRole
+from app.features.steps.models import StepRead
 from app.shared.table_base import TableBase, enum_column
 
 
@@ -78,3 +79,12 @@ class ProjectRead(SQLModel):
     created_at: datetime
     updated_at: datetime
     my_role: MemberRole
+    # Step summary, so lists can show "3 of 7" and the total estimate.
+    step_count: int
+    done_step_count: int
+    estimated_minutes: int
+    unestimated_step_count: int
+
+
+class ProjectDetail(ProjectRead):
+    steps: list[StepRead]
